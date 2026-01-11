@@ -12,17 +12,19 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
     return (
-        <div className="bg-gray-50/50 min-h-screen">
-            <div className="bg-brand text-white py-20">
-                <Container>
-                    <SectionHeading
-                        title={siteContent.contact.title}
-                        subtitle={siteContent.contact.subtitle}
-                        className="mb-0 text-white"
-                    />
-                    {/* Override subtitle color */}
-                    <p className="text-white/80 max-w-2xl mx-auto text-lg leading-relaxed text-center -mt-8">
-                        {siteContent.contact.subtitle}
+        <div className="bg-white min-h-screen">
+            {/* Hero Section */}
+            <div className="relative bg-brand-dark overflow-hidden py-24 lg:py-32">
+                {/* Decorative Background Elements */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-brand opacity-20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-blush opacity-10 rounded-full blur-2xl -translate-x-1/3 translate-y-1/3" />
+
+                <Container className="relative z-10 text-center">
+                    <h1 className="font-display text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight">
+                        {siteContent.contact.title}
+                    </h1>
+                    <p className="text-white/90 max-w-2xl mx-auto text-xl leading-relaxed font-light">
+                        We'd love to hear from you. Contact us for trial classes, assessments, and general inquiries.
                     </p>
                 </Container>
             </div>

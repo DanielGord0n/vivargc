@@ -37,13 +37,13 @@ export const siteContent: SiteContent = {
             id: "scarborough",
             name: "Scarborough",
             address: "291 Progress Ave, Scarborough, ON M1P 2Z2",
-            mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2882.356789!2d-79.256!3d43.784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjnCsDUwJzA0LjQiTiA3OcKwMTUnMjEuNiJX!5e0!3m2!1sen!2sca!4v1600000000000!5m2!1sen!2sca", // Placeholder embed
+            mapUrl: "https://maps.google.com/maps?q=291+Progress+Ave,+Scarborough,+ON+M1P+2Z2&t=&z=15&ie=UTF8&iwloc=&output=embed",
         },
         {
             id: "bayview",
             name: "Bayview",
             address: "2737 Bayview Avenue, Toronto, ON M2L 1C5",
-            mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2884!2d-79.39!3d43.75!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjnCsDUwJzA0LjQiTiA3OcKwMTUnMjEuNiJX!5e0!3m2!1sen!2sca!4v1600000000000!5m2!1sen!2sca", // Placeholder embed
+            mapUrl: "https://maps.google.com/maps?q=2737+Bayview+Avenue,+Toronto,+ON+M2L+1C5&t=&z=15&ie=UTF8&iwloc=&output=embed",
         },
     ],
     hero: {
