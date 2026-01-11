@@ -44,7 +44,7 @@ export function Navbar() {
                     {/* Using SVG placeholder for logo */}
                     <div className="relative h-10 w-32 overflow-hidden transition-transform duration-300 group-hover:scale-105">
                         <Image
-                            src="/logo.svg"
+                            src="/logo.png"
                             alt={siteContent.brand.name}
                             fill
                             className="object-contain object-left"
