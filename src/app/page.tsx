@@ -102,7 +102,7 @@ export default function Home() {
 
               <div className="relative h-full w-full rounded-[2rem] overflow-hidden shadow-2xl">
                 <Image
-                  src="/placeholders/hero.svg"
+                  src="/placeholders/hero-image.png"
                   alt="Rhythmic Gymnastics"
                   fill
                   className="object-cover"
@@ -204,7 +204,7 @@ export default function Home() {
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className={`relative aspect-square rounded-xl overflow-hidden ${i % 2 === 0 ? 'translate-y-8' : ''}`}>
                   <Image
-                    src={`/placeholders/gallery1.svg`}
+                    src={`/placeholders/gallery${i}.png`}
                     alt="Gallery preview"
                     fill
                     className="object-cover hover:scale-110 transition-transform duration-700"
