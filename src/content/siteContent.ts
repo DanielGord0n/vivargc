@@ -149,11 +149,11 @@ export const siteContent: SiteContent = {
         },
         {
             question: "Do we need to buy equipment?",
-            answer: "For recreational classes, all equipment is provided. Competitive athletes will need their own apparatus.",
+            answer: "Equipment requirements will be discussed in person based on your child's specific needs and level.",
         },
         {
             question: "Are trial classes free?",
-            answer: "We offer a paid trial class which is deducted from your tuition if you register. Contact us to book.",
+            answer: "Yes! Every person is offered one free trial class to experience our training before registering.",
         },
     ],
     registration: {
