@@ -135,12 +135,12 @@ export const siteContent: SiteContent = {
         },
     ],
     gallery: [
-        { src: "/placeholders/gallery1.png", category: "Training", alt: "Training session" },
-        { src: "/placeholders/gallery2.png", category: "Performance", alt: "Stage performance" },
-        { src: "/placeholders/gallery3.png", category: "Event", alt: "Competition event" },
-        { src: "/placeholders/gallery4.png", category: "Training", alt: "Stretching" },
-        { src: "/placeholders/gallery1.png", category: "Performance", alt: "Ribbon routine" },
-        { src: "/placeholders/gallery2.png", category: "Video", alt: "Highlight reel" },
+        { src: "/images/Viva3.png", category: "Training", alt: "Training session" },
+        { src: "/images/Viva6.png", category: "Performance", alt: "Stage performance" },
+        { src: "/images/Viva9.png", category: "Event", alt: "Competition event" },
+        { src: "/images/Viva8.png", category: "Training", alt: "Stretching" },
+        { src: "/images/Viva1.png", category: "Performance", alt: "Ribbon routine" },
+        { src: "/images/Viva2.png", category: "Video", alt: "Highlight reel" },
     ],
     faqs: [
         {
