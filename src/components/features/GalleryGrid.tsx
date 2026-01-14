@@ -59,12 +59,24 @@ export function GalleryGrid({ items }: GalleryGridProps) {
                             className="relative aspect-square cursor-pointer group overflow-hidden rounded-xl"
                             onClick={() => setSelectedItem(item)}
                         >
-                            <Image
-                                src={item.src}
-                                alt={item.alt}
-                                fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-110"
-                            />
+                            {item.category === 'Video' ? (
+                                <video
+                                    src={item.src}
+                                    className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
+                                    muted
+                                    playsInline
+                                    loop
+                                    onMouseEnter={(e) => e.currentTarget.play()}
+                                    onMouseLeave={(e) => e.currentTarget.pause()}
+                                />
+                            ) : (
+                                <Image
+                                    src={item.src}
+                                    alt={item.alt}
+                                    fill
+                                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                            )}
                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
                             {item.category === 'Video' && (
                                 <div className="absolute inset-0 flex items-center justify-center">
@@ -120,9 +132,13 @@ export function GalleryGrid({ items }: GalleryGridProps) {
                         <div className="relative w-full max-w-4xl max-h-[85vh] aspect-video" onClick={(e) => e.stopPropagation()}>
                             {/* Simplified lightbox - just re-render image or placeholder video */}
                             {selectedItem.category === 'Video' ? (
-                                <div className="w-full h-full bg-gray-900 flex items-center justify-center text-white">
-                                    <p>Video Placeholder (Embed YouTube Here)</p>
-                                </div>
+                                <video
+                                    src={selectedItem.src}
+                                    controls
+                                    autoPlay
+                                    playsInline
+                                    className="w-full h-full object-contain bg-black"
+                                />
                             ) : (
                                 <Image
                                     src={selectedItem.src}
