@@ -83,14 +83,15 @@ export const siteContent: SiteContent = {
     ],
     coaches: [
         {
-            name: "Nathaly Vivier",
-            role: "Head Coach & Founder",
-            bio: "Former national team member with over 15 years of coaching experience. Passionate about developing confident, artistic athletes.",
-            image: "/placeholders/coach1.png",
-            images: ["/placeholders/coach1.png"],
-            credentials: ["NCCP Level 3 Certified", "Former National Judge", "Bachelor of Kinesiology"],
-            specialties: ["Technique", "Choreography", "Flexibility"],
+            name: "Natalia Kachaiev",
+            role: "Founder, Head Coach & Brevet Judge",
+            bio: "As Founder and Head Coach at Viva RGC, Natalia Kachaiev takes great pride in developing national athletes who consistently attain the coveted High Performance status (top 15 in Canada) at both junior and senior levels and regularly become part of Canada’s National Team. Natalia has travelled extensively worldwide with Canada’s top individual RG athletes, competing at World Cups, the Pan American Games, and various international tournaments. Notably, in 2019, one of her gymnasts placed in the top 10 in the world. A highly respected official, Natalia holds a Level 4 Brevet Judge certification for RG groups and Level 3 for RG individuals, leading to frequent invitations to judge at national, provincial, and international tournaments. She is passionate about sharing her vast experience and deep understanding of world-class rhythmic gymnastics with her students.",
+            image: "/images/NataliaKachaiev.jpeg",
+            images: ["/images/NataliaKachaiev.jpeg", "/images/Viva16.jpeg"],
+            credentials: ["Brevet Judge (Level 4 Group/Level 3 Ind.)", "High Performance Coach", "Coach of Top 10 World Gymnast"],
+            specialties: ["High Performance", "Elite Competition", "Judging Strategy"],
         },
+
         {
             name: "Tatyana Saakian",
             role: "Senior Coach",
@@ -166,6 +167,11 @@ export const siteContent: SiteContent = {
     ],
     gallery: [
         { src: "/images/VivaVideo.mp4", category: "Video", alt: "Viva Rhythmic Gymnastics Highlights" },
+        { src: "/images/Viva12.jpeg", category: "Training", alt: "Gymnastics training" },
+        { src: "/images/Viva13.jpeg", category: "Performance", alt: "On stage performance" },
+        { src: "/images/Viva14.jpeg", category: "Training", alt: "Flexibility training" },
+        { src: "/images/Viva15.jpeg", category: "Performance", alt: "Competition routine" },
+        { src: "/images/Viva16.jpeg", category: "Training", alt: "Gymnast in action" },
         { src: "/images/Viva1.png", category: "Performance", alt: "Ribbon routine" },
         { src: "/images/Viva2.png", category: "Training", alt: "Floor exercise" },
         { src: "/images/Viva3.png", category: "Training", alt: "Training session" },
