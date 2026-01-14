@@ -167,6 +167,13 @@ export const siteContent: SiteContent = {
     ],
     gallery: [
         { src: "/images/VivaVideo.mp4", category: "Video", alt: "Viva Rhythmic Gymnastics Highlights" },
+        { src: "/images/VivaVideo2.mp4", category: "Video", alt: "Competition Highlights" },
+        { src: "/images/Viva17.jpeg", category: "Performance", alt: "Stage performance" },
+        { src: "/images/Viva18.jpeg", category: "Training", alt: "Training moment" },
+        { src: "/images/Viva19.jpeg", category: "Performance", alt: "Rhythmic gymnastics pose" },
+        { src: "/images/Viva20.jpeg", category: "Training", alt: "Gymnast stretching" },
+        { src: "/images/Viva21.jpeg", category: "Performance", alt: "Event photo" },
+        { src: "/images/Viva22.jpeg", category: "Training", alt: "Practice session" },
         { src: "/images/Viva12.jpeg", category: "Training", alt: "Gymnastics training" },
         { src: "/images/Viva13.jpeg", category: "Performance", alt: "On stage performance" },
         { src: "/images/Viva14.jpeg", category: "Training", alt: "Flexibility training" },
