@@ -1,7 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProgramCard } from "@/components/features/ProgramCard";
-import { siteContent } from "@/content/siteContent";
+import { getPrograms } from "@/lib/content";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,6 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default function ProgramsPage() {
+    // Get programs from CMS
+    const programs = getPrograms();
+
     return (
         <Container className="py-24">
             <SectionHeading
@@ -19,8 +22,8 @@ export default function ProgramsPage() {
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-24">
-                {siteContent.programs.map((program) => (
-                    <ProgramCard key={program.title} program={program} />
+                {programs.map((program) => (
+                    <ProgramCard key={program.id} program={program} />
                 ))}
             </div>
 

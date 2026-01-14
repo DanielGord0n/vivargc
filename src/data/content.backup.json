@@ -1,0 +1,363 @@
+{
+  "coaches": [
+    {
+      "id": "natalia-kachaiev",
+      "name": "Natalia Kachaiev",
+      "role": "Founder, Head Coach & Brevet Judge",
+      "bio": "As Founder and Head Coach at Viva RGC, Natalia Kachaiev takes great pride in developing national athletes who consistently attain the coveted High Performance status (top 15 in Canada) at both junior and senior levels and regularly become part of Canada's National Team. Natalia has travelled extensively worldwide with Canada's top individual RG athletes, competing at World Cups, the Pan American Games, and various international tournaments. Notably, in 2019, one of her gymnasts placed in the top 10 in the world. A highly respected official, Natalia holds a Level 4 Brevet Judge certification for RG groups and Level 3 for RG individuals, leading to frequent invitations to judge at national, provincial, and international tournaments. She is passionate about sharing her vast experience and deep understanding of world-class rhythmic gymnastics with her students.",
+      "image": "/images/NataliaKachaiev.jpeg",
+      "images": [
+        "/images/NataliaKachaiev.jpeg",
+        "/images/NataliaKachaiev2.jpeg"
+      ],
+      "credentials": [
+        "Brevet Judge (Level 4 Group/Level 3 Ind.)",
+        "High Performance Coach",
+        "Coach of Top 10 World Gymnast"
+      ],
+      "specialties": [
+        "High Performance",
+        "Elite Competition",
+        "Judging Strategy"
+      ]
+    },
+    {
+      "id": "tatyana-saakian",
+      "name": "Tatyana Saakian",
+      "role": "Senior Coach",
+      "bio": "Tatyana began her rhythmic gymnastics training at the young age of 5. Throughout her training, she engaged in intensive practice and competed internationally, earning numerous gold and silver medals in various tournaments. Notably, she was also a member of the National Team of Lithuania and participated in the European Championship. In 2008, Tatyana took on the role of Head Coach at Toronto RG, where she has successfully led her gymnasts to victories at International, National, and Provincial championships. Her extensive experience and dedication to the sport have greatly contributed to the development of her athletes. Tatyana holds a Master of Sport degree and has achieved Level 3 certification at the Canadian level, further showcasing her expertise in rhythmic gymnastics coaching.",
+      "image": "/images/TatyanaSaakian1.jpeg",
+      "images": [
+        "/images/TatyanaSaakian1.jpeg",
+        "/images/TatyanaSaakian2.jpeg"
+      ],
+      "credentials": [
+        "Master of Sport",
+        "NCCP Level 3 Certified",
+        "National Team (Lithuania)"
+      ],
+      "specialties": [
+        "High Performance",
+        "Technique",
+        "Routine Composition"
+      ]
+    },
+    {
+      "id": "olga-pasternak",
+      "name": "Olga Pasternak",
+      "role": "Ballet Instructor & Choreographer",
+      "bio": "Olga began her rigorous ballet education at the Kyiv State Choreographic School from 1998 to 2006, followed by earning a B.A. with honours in Choreography, Ballet Teaching, and Ballet Direction at Kyiv National Karpenko‑Karyi University (2006–2011). In 2006, she joined the Kyiv Municipal Academy Theatre for Children and Youth as a soloist before moving on in 2014 to the Kyiv City Ballet, where by 2017 she had ascended to the rank of principal dancer. Her performance repertoire reflects remarkable versatility, encompassing major classical and character roles. In 2022, Olga and her husband transitioned to Canada amid the war in Ukraine, having raised over $800,000 for humanitarian relief through performances. Since relocating, she's been embraced by the Bayview School of Ballet community and continues to perform in high-profile productions.",
+      "image": "/images/OlgaPasternak1.jpeg",
+      "images": [
+        "/images/OlgaPasternak1.jpeg",
+        "/images/OlgaPasternak2.jpeg"
+      ],
+      "credentials": [
+        "B.A. Choreography (Honours)",
+        "Principal Dancer (Kyiv City Ballet)",
+        "Best Juliet in Ukraine (2018-19)"
+      ],
+      "specialties": [
+        "Ballet Technique",
+        "Character Dance",
+        "Choreography"
+      ]
+    },
+    {
+      "id": "yulia-dallami",
+      "name": "Yulia Dallami",
+      "role": "Recreational & Pre-Competitive Coach",
+      "bio": "Yulia has been passionate about rhythmic gymnastics since childhood. She trained and competed internationally, earning numerous medals and obtaining a Master of Sport degree in Rhythmic Gymnastics. Since 2022, she has been coaching in Canada, specializing in working with young children at our North York (Bayview) location. Yulia excels in conducting intensive individual training and has successfully led her gymnasts to victories, combining professional expertise with a nurturing approach for young athletes.",
+      "image": "/images/YuliaDallami.jpeg",
+      "images": [
+        "/images/YuliaDallami.jpeg"
+      ],
+      "credentials": [
+        "Master of Sport",
+        "International Medalist",
+        "Early Development Specialist"
+      ],
+      "specialties": [
+        "Recreational Development",
+        "Foundational Technique",
+        "Youth Training"
+      ]
+    },
+    {
+      "id": "coach-1768429075874",
+      "name": "Testing",
+      "role": "Testing",
+      "bio": "Testing",
+      "image": "",
+      "images": [],
+      "credentials": [],
+      "specialties": []
+    }
+  ],
+  "gallery": [
+    {
+      "id": "1",
+      "src": "/images/VivaVideo.mp4",
+      "category": "Video",
+      "alt": "Viva Rhythmic Gymnastics Highlights"
+    },
+    {
+      "id": "2",
+      "src": "/images/VivaVideo2.mp4",
+      "category": "Video",
+      "alt": "Competition Highlights"
+    },
+    {
+      "id": "3",
+      "src": "/images/NataliaKachaiev2.jpeg",
+      "category": "Performance",
+      "alt": "Coach Natalia"
+    },
+    {
+      "id": "4",
+      "src": "/images/Viva17.jpeg",
+      "category": "Performance",
+      "alt": "Stage performance"
+    },
+    {
+      "id": "5",
+      "src": "/images/Viva18.jpeg",
+      "category": "Training",
+      "alt": "Training moment"
+    },
+    {
+      "id": "6",
+      "src": "/images/Viva19.jpeg",
+      "category": "Performance",
+      "alt": "Rhythmic gymnastics pose"
+    },
+    {
+      "id": "7",
+      "src": "/images/Viva20.jpeg",
+      "category": "Training",
+      "alt": "Gymnast stretching"
+    },
+    {
+      "id": "8",
+      "src": "/images/Viva21.jpeg",
+      "category": "Performance",
+      "alt": "Event photo"
+    },
+    {
+      "id": "9",
+      "src": "/images/Viva22.jpeg",
+      "category": "Training",
+      "alt": "Practice session"
+    },
+    {
+      "id": "10",
+      "src": "/images/Viva23.jpeg",
+      "category": "Performance",
+      "alt": "Gymnastics performance"
+    },
+    {
+      "id": "11",
+      "src": "/images/Viva24.jpeg",
+      "category": "Training",
+      "alt": "Training session"
+    },
+    {
+      "id": "12",
+      "src": "/images/Viva25.jpeg",
+      "category": "Performance",
+      "alt": "Competition moment"
+    },
+    {
+      "id": "13",
+      "src": "/images/Viva26.jpeg",
+      "category": "Training",
+      "alt": "Gymnast pose"
+    },
+    {
+      "id": "14",
+      "src": "/images/Viva27.jpeg",
+      "category": "Performance",
+      "alt": "Artistic routine"
+    },
+    {
+      "id": "15",
+      "src": "/images/Viva12.jpeg",
+      "category": "Training",
+      "alt": "Gymnastics training"
+    },
+    {
+      "id": "16",
+      "src": "/images/Viva13.jpeg",
+      "category": "Performance",
+      "alt": "On stage performance"
+    },
+    {
+      "id": "17",
+      "src": "/images/Viva14.jpeg",
+      "category": "Training",
+      "alt": "Flexibility training"
+    },
+    {
+      "id": "18",
+      "src": "/images/Viva15.jpeg",
+      "category": "Performance",
+      "alt": "Competition routine"
+    },
+    {
+      "id": "19",
+      "src": "/images/Viva16.jpeg",
+      "category": "Training",
+      "alt": "Gymnast in action"
+    },
+    {
+      "id": "20",
+      "src": "/images/Viva1.png",
+      "category": "Performance",
+      "alt": "Ribbon routine"
+    },
+    {
+      "id": "21",
+      "src": "/images/Viva2.png",
+      "category": "Training",
+      "alt": "Floor exercise"
+    },
+    {
+      "id": "22",
+      "src": "/images/Viva3.png",
+      "category": "Training",
+      "alt": "Training session"
+    },
+    {
+      "id": "23",
+      "src": "/images/Viva4.png",
+      "category": "Performance",
+      "alt": "Competition readiness"
+    },
+    {
+      "id": "24",
+      "src": "/images/Viva5.png",
+      "category": "Performance",
+      "alt": "Artistic pose"
+    },
+    {
+      "id": "25",
+      "src": "/images/Viva6.png",
+      "category": "Training",
+      "alt": "Flexibility training"
+    },
+    {
+      "id": "26",
+      "src": "/images/Viva9.png",
+      "category": "Performance",
+      "alt": "Competition event"
+    },
+    {
+      "id": "27",
+      "src": "/images/Viva10.png",
+      "category": "Performance",
+      "alt": "Group routine"
+    },
+    {
+      "id": "28",
+      "src": "/images/Viva11.png",
+      "category": "Training",
+      "alt": "Balance work"
+    }
+  ],
+  "schedule": {
+    "scarborough": {
+      "Monday": [
+        {
+          "time": "3:00 PM - 8:00 PM",
+          "group": "Provincial & National Group"
+        }
+      ],
+      "Tuesday": [
+        {
+          "time": "4:00 PM - 7:00 PM",
+          "group": "National Group"
+        }
+      ],
+      "Wednesday": [
+        {
+          "time": "4:00 PM - 7:30 PM",
+          "group": "Provincial Group"
+        },
+        {
+          "time": "4:30 PM - 6:30 PM",
+          "group": "Beginner Group"
+        }
+      ],
+      "Thursday": [
+        {
+          "time": "4:00 PM - 7:00 PM",
+          "group": "National Group"
+        }
+      ],
+      "Friday": [
+        {
+          "time": "4:00 PM - 7:00 PM",
+          "group": "Provincial & National Group"
+        }
+      ],
+      "Saturday": [
+        {
+          "time": "9:00 AM - 12:00 PM",
+          "group": "Provincial Group"
+        },
+        {
+          "time": "10:00 AM - 2:00 PM",
+          "group": "National Group"
+        },
+        {
+          "time": "10:00 AM - 12:00 PM",
+          "group": "Beginners Group"
+        }
+      ]
+    },
+    "bayview": {
+      "Tuesday": [
+        {
+          "time": "7:00 PM - 10:00 PM",
+          "group": "Provincial Group"
+        }
+      ],
+      "Thursday": [
+        {
+          "time": "5:00 PM - 7:00 PM",
+          "group": "Children Beginners"
+        }
+      ]
+    }
+  },
+  "programs": [
+    {
+      "id": "recreational",
+      "title": "Recreational",
+      "slug": "recreational",
+      "ages": "Ages 3+",
+      "description": "Fun, engaging classes that introduce the fundamentals of rhythmic gymnastics with ribbons, hoops, and balls."
+    },
+    {
+      "id": "competitive",
+      "title": "Competitive Team",
+      "slug": "competitive",
+      "ages": "By Audition",
+      "description": "Intensive training for athletes aiming for provincial and national level competitions."
+    },
+    {
+      "id": "private-lessons",
+      "title": "Private Lessons",
+      "slug": "private-lessons",
+      "ages": "All Ages",
+      "description": "One-on-one coaching to refine technique, master routines, or prepare for special events."
+    },
+    {
+      "id": "camps",
+      "title": "Summer Camps",
+      "slug": "camps",
+      "ages": "Ages 5-12",
+      "description": "Full-day camps featuring gymnastics, dance, crafts, and outdoor activities."
+    }
+  ]
+}

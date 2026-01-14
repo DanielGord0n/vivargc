@@ -69,19 +69,25 @@ export function CoachCard({ coach }: CoachCardProps) {
                 onClick={() => setIsModalOpen(true)}
             >
                 <div className="relative h-96 w-full overflow-hidden bg-gray-100 flex-shrink-0">
-                    {images.map((img, idx) => (
-                        <div
-                            key={img}
-                            className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${idx === currentIndex ? 'opacity-100' : 'opacity-0'}`}
-                        >
-                            <Image
-                                src={img}
-                                alt={`${coach.name} - Photo ${idx + 1}`}
-                                fill
-                                className="object-cover object-top"
-                            />
+                    {images.length > 0 ? (
+                        images.map((img, idx) => (
+                            <div
+                                key={img}
+                                className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${idx === currentIndex ? 'opacity-100' : 'opacity-0'}`}
+                            >
+                                <Image
+                                    src={img}
+                                    alt={`${coach.name} - Photo ${idx + 1}`}
+                                    fill
+                                    className="object-cover object-top"
+                                />
+                            </div>
+                        ))
+                    ) : (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+                            <span className="text-gray-400 text-6xl">?</span>
                         </div>
-                    ))}
+                    )}
 
                     <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
 

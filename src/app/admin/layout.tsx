@@ -168,21 +168,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </nav>
 
                 <div className="p-4 space-y-2 border-t border-gray-200">
-                    {/* Undo Button */}
-                    <button
-                        onClick={handleUndo}
-                        disabled={!hasBackup || restoring}
-                        className={cn(
-                            "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium w-full transition-colors",
-                            hasBackup
-                                ? "text-orange-600 hover:bg-orange-50"
-                                : "text-gray-300 cursor-not-allowed"
-                        )}
-                    >
-                        <Undo2 className="w-5 h-5" />
-                        {restoring ? "Restoring..." : "Undo Changes"}
-                    </button>
-
                     {/* Logout / Back to Site */}
                     <button
                         onClick={handleLogout}

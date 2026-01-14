@@ -18,7 +18,7 @@ export function ScheduleGrid({ schedule }: ScheduleGridProps) {
         bayview: "North York (Bayview)",
     };
     const [activeLocation, setActiveLocation] = useState<LocationKey>(locations[0]);
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
     return (
         <div className="w-full max-w-5xl mx-auto">
