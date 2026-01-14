@@ -1,17 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { LocationSchedule } from "@/content/types";
+import { Schedule, ScheduleItem } from "@/lib/content";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ScheduleGridProps {
-    schedule: LocationSchedule;
+    schedule: Schedule;
 }
 
+type LocationKey = "scarborough" | "bayview";
+
 export function ScheduleGrid({ schedule }: ScheduleGridProps) {
-    const locations = Object.keys(schedule);
-    const [activeLocation, setActiveLocation] = useState(locations[0]);
+    const locations: LocationKey[] = ["scarborough", "bayview"];
+    const locationNames: Record<LocationKey, string> = {
+        scarborough: "Scarborough",
+        bayview: "North York (Bayview)",
+    };
+    const [activeLocation, setActiveLocation] = useState<LocationKey>(locations[0]);
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
     return (
@@ -29,7 +35,7 @@ export function ScheduleGrid({ schedule }: ScheduleGridProps) {
                                 : "bg-white text-gray-500 hover:text-brand hover:bg-gray-50 border border-gray-200"
                         )}
                     >
-                        {loc.charAt(0).toUpperCase() + loc.slice(1)}
+                        {locationNames[loc]}
                     </button>
                 ))}
             </div>
@@ -46,7 +52,7 @@ export function ScheduleGrid({ schedule }: ScheduleGridProps) {
                         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x md:divide-gray-100"
                     >
                         {days.map((day) => {
-                            const classes = schedule[activeLocation][day];
+                            const classes: ScheduleItem[] | undefined = schedule[activeLocation]?.[day];
                             return (
                                 <div key={day} className="p-6 md:p-8 min-h-[200px] border-b border-gray-100 last:border-0 md:border-b-0">
                                     <h4 className="font-display text-xl font-bold text-gray-900 mb-4 pb-2 border-b border-blush/20 inline-block">
@@ -55,7 +61,7 @@ export function ScheduleGrid({ schedule }: ScheduleGridProps) {
 
                                     {classes && classes.length > 0 ? (
                                         <ul className="space-y-4">
-                                            {classes.map((cls, idx) => (
+                                            {classes.map((cls: ScheduleItem, idx: number) => (
                                                 <li key={idx} className="group">
                                                     <div className="text-sm font-bold text-brand group-hover:text-brand-dark transition-colors">
                                                         {cls.time}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Plus, Trash2, Save, Upload, X, Play } from "lucide-react";
+import { Plus, Trash2, Upload, X, Play, Expand, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface GalleryItem {
     id: string;
@@ -16,6 +16,7 @@ export default function GalleryAdmin() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
     useEffect(() => {
         fetchGallery();
@@ -33,9 +34,19 @@ export default function GalleryAdmin() {
         }
     };
 
+    const createBackup = async () => {
+        try {
+            await fetch("/api/admin/backup", { method: "POST" });
+        } catch (error) {
+            console.error("Failed to create backup:", error);
+        }
+    };
+
     const saveGallery = async (updatedGallery: GalleryItem[]) => {
         setSaving(true);
         try {
+            await createBackup();
+
             const res = await fetch("/api/admin/content");
             const data = await res.json();
             data.gallery = updatedGallery;
@@ -107,6 +118,26 @@ export default function GalleryAdmin() {
         return src.endsWith(".mp4") || src.endsWith(".webm") || src.endsWith(".mov");
     };
 
+    const openLightbox = (index: number) => {
+        setLightboxIndex(index);
+    };
+
+    const closeLightbox = () => {
+        setLightboxIndex(null);
+    };
+
+    const nextItem = () => {
+        if (lightboxIndex !== null) {
+            setLightboxIndex((lightboxIndex + 1) % gallery.length);
+        }
+    };
+
+    const prevItem = () => {
+        if (lightboxIndex !== null) {
+            setLightboxIndex((lightboxIndex - 1 + gallery.length) % gallery.length);
+        }
+    };
+
     if (loading) {
         return <div className="text-center py-12">Loading...</div>;
     }
@@ -117,7 +148,7 @@ export default function GalleryAdmin() {
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900">Gallery</h1>
                     <p className="text-gray-600 mt-1">
-                        {gallery.length} items • Upload images and videos
+                        {gallery.length} items • Click to preview, hover to delete
                     </p>
                 </div>
                 <label className={`flex items-center gap-2 bg-brand text-white px-4 py-2 rounded-lg hover:bg-brand/90 transition-colors cursor-pointer ${uploading ? 'opacity-50' : ''}`}>
@@ -136,15 +167,24 @@ export default function GalleryAdmin() {
 
             {/* Gallery Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {gallery.map((item) => (
+                {gallery.map((item, index) => (
                     <div
                         key={item.id}
-                        className="group relative aspect-square bg-gray-100 rounded-xl overflow-hidden"
+                        className="group relative aspect-square bg-gray-100 rounded-xl overflow-hidden cursor-pointer"
+                        onClick={() => openLightbox(index)}
                     >
                         {isVideo(item.src) ? (
-                            <div className="w-full h-full flex items-center justify-center bg-gray-900">
-                                <Play className="w-12 h-12 text-white" />
-                            </div>
+                            <video
+                                src={item.src}
+                                className="w-full h-full object-cover"
+                                muted
+                                playsInline
+                                onMouseEnter={(e) => e.currentTarget.play()}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.pause();
+                                    e.currentTarget.currentTime = 0;
+                                }}
+                            />
                         ) : (
                             <Image
                                 src={item.src}
@@ -154,10 +194,29 @@ export default function GalleryAdmin() {
                             />
                         )}
 
-                        {/* Overlay */}
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        {/* Video indicator */}
+                        {isVideo(item.src) && (
+                            <div className="absolute top-2 right-2 bg-black/60 p-1.5 rounded-full">
+                                <Play className="w-4 h-4 text-white" />
+                            </div>
+                        )}
+
+                        {/* Hover overlay */}
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                             <button
-                                onClick={() => handleDelete(item.id)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    openLightbox(index);
+                                }}
+                                className="p-3 bg-white text-gray-900 rounded-full hover:bg-gray-100 transition-colors"
+                            >
+                                <Expand className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDelete(item.id);
+                                }}
                                 className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
                             >
                                 <Trash2 className="w-5 h-5" />
@@ -174,15 +233,60 @@ export default function GalleryAdmin() {
 
             {gallery.length === 0 && (
                 <div className="text-center py-16 text-gray-500">
-                    <Image
-                        src="/images/placeholder.svg"
-                        alt="No images"
-                        width={100}
-                        height={100}
-                        className="mx-auto mb-4 opacity-50"
-                    />
                     <p>No gallery items yet.</p>
                     <p className="text-sm">Upload some images or videos to get started.</p>
+                </div>
+            )}
+
+            {/* Lightbox */}
+            {lightboxIndex !== null && gallery[lightboxIndex] && (
+                <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
+                    {/* Close button */}
+                    <button
+                        onClick={closeLightbox}
+                        className="absolute top-4 right-4 p-2 text-white hover:bg-white/10 rounded-full transition-colors"
+                    >
+                        <X className="w-8 h-8" />
+                    </button>
+
+                    {/* Navigation */}
+                    <button
+                        onClick={prevItem}
+                        className="absolute left-4 p-2 text-white hover:bg-white/10 rounded-full transition-colors"
+                    >
+                        <ChevronLeft className="w-8 h-8" />
+                    </button>
+                    <button
+                        onClick={nextItem}
+                        className="absolute right-4 p-2 text-white hover:bg-white/10 rounded-full transition-colors"
+                    >
+                        <ChevronRight className="w-8 h-8" />
+                    </button>
+
+                    {/* Media */}
+                    <div className="max-w-5xl max-h-[80vh] w-full mx-4">
+                        {isVideo(gallery[lightboxIndex].src) ? (
+                            <video
+                                src={gallery[lightboxIndex].src}
+                                controls
+                                autoPlay
+                                className="w-full h-full max-h-[80vh] object-contain"
+                            />
+                        ) : (
+                            <Image
+                                src={gallery[lightboxIndex].src}
+                                alt={gallery[lightboxIndex].alt}
+                                width={1200}
+                                height={800}
+                                className="w-full h-full max-h-[80vh] object-contain"
+                            />
+                        )}
+                    </div>
+
+                    {/* Counter */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm">
+                        {lightboxIndex + 1} / {gallery.length}
+                    </div>
                 </div>
             )}
         </div>
