@@ -30,68 +30,75 @@ export default function ContactPage() {
             </div>
 
             <Container className="py-24 -mt-12">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    {/* Form */}
-                    <div className="order-2 lg:order-1">
-                        <ContactForm />
-                    </div>
 
-                    {/* Info */}
-                    <div className="order-1 lg:order-2 space-y-8">
-                        {/* Locations */}
-                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                            <h3 className="font-display text-2xl font-bold mb-6">Our Locations</h3>
-                            <div className="space-y-8">
-                                {siteContent.locations.map((loc) => (
-                                    <div key={loc.id}>
-                                        <div className="flex items-start gap-4 mb-4">
-                                            <div className="bg-blush/20 p-2 rounded-full">
-                                                <MapPin className="w-5 h-5 text-brand" />
-                                            </div>
-                                            <div>
-                                                <h4 className="font-bold text-lg">{loc.name}</h4>
-                                                <p className="text-gray-600 mb-2">{loc.address}</p>
-                                                <a href={loc.mapUrl} target="_blank" className="text-sm text-brand font-medium hover:underline">Open in Maps</a>
-                                            </div>
-                                        </div>
-                                        <div className="aspect-video w-full rounded-lg overflow-hidden bg-gray-100">
-                                            <iframe
-                                                src={loc.mapUrl}
-                                                width="100%"
-                                                height="100%"
-                                                style={{ border: 0 }}
-                                                allowFullScreen
-                                                loading="lazy"
-                                            />
-                                        </div>
-                                    </div>
-                                ))}
+                {/* Contact Form Section */}
+                <div className="max-w-3xl mx-auto mb-24">
+                    <ContactForm />
+
+                    {/* Quick Contact Grid */}
+                    <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="bg-gray-50 p-6 rounded-xl text-center border border-gray-100">
+                            <div className="bg-white p-3 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4 shadow-sm text-brand">
+                                <Phone className="w-5 h-5" />
                             </div>
+                            <h4 className="font-bold text-gray-900 mb-1">Phone</h4>
+                            <a href={`tel:${siteContent.brand.socials.phone}`} className="text-gray-600 hover:text-brand transition-colors block">{siteContent.brand.socials.phone}</a>
                         </div>
 
-                        {/* Contact Details */}
-                        <div className="bg-brand-dark text-white p-8 rounded-2xl shadow-lg">
-                            <h3 className="font-display text-2xl font-bold mb-6">Quick Contact</h3>
-                            <ul className="space-y-4">
-                                <li className="flex items-center gap-3">
-                                    <Phone className="w-5 h-5 opacity-80" />
-                                    <a href={`tel:${siteContent.brand.socials.phone}`} className="hover:underline">{siteContent.brand.socials.phone}</a>
-                                </li>
-                                <li className="flex items-center gap-3">
-                                    <Mail className="w-5 h-5 opacity-80" />
-                                    <a href={`mailto:${siteContent.brand.socials.email}`} className="hover:underline">{siteContent.brand.socials.email}</a>
-                                </li>
-                                <li className="flex items-center gap-3">
-                                    <Clock className="w-5 h-5 opacity-80" />
-                                    <span>Mon - Sat: 9:00 AM - 8:00 PM</span>
-                                </li>
-                            </ul>
+                        <div className="bg-gray-50 p-6 rounded-xl text-center border border-gray-100">
+                            <div className="bg-white p-3 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4 shadow-sm text-brand">
+                                <Mail className="w-5 h-5" />
+                            </div>
+                            <h4 className="font-bold text-gray-900 mb-1">Email</h4>
+                            <a href={`mailto:${siteContent.brand.socials.email}`} className="text-gray-600 hover:text-brand transition-colors block text-sm">{siteContent.brand.socials.email}</a>
+                        </div>
+
+                        <div className="bg-gray-50 p-6 rounded-xl text-center border border-gray-100">
+                            <div className="bg-white p-3 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4 shadow-sm text-brand">
+                                <Clock className="w-5 h-5" />
+                            </div>
+                            <h4 className="font-bold text-gray-900 mb-1">Hours</h4>
+                            <p className="text-gray-600 text-sm">Mon - Sat: 9am - 8pm</p>
                         </div>
                     </div>
                 </div>
 
+                {/* Locations Section */}
+                <div className="mb-24">
+                    <SectionHeading title="Our Locations" centered />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {siteContent.locations.map((loc) => (
+                            <div key={loc.id} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 h-full flex flex-col">
+                                <div className="flex items-start gap-4 mb-6">
+                                    <div className="bg-blush/20 p-2 rounded-full shrink-0">
+                                        <MapPin className="w-5 h-5 text-brand" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-xl mb-1">{loc.name}</h4>
+                                        <p className="text-gray-600 mb-2 leading-relaxed">{loc.address}</p>
+                                        <a href={loc.mapUrl} target="_blank" className="text-sm text-brand font-bold hover:underline inline-flex items-center gap-1">
+                                            Open in Maps &rarr;
+                                        </a>
+                                    </div>
+                                </div>
+                                <div className="aspect-video w-full rounded-xl overflow-hidden bg-gray-100 mt-auto shadow-inner">
+                                    <iframe
+                                        src={loc.mapEmbedUrl}
+                                        width="100%"
+                                        height="100%"
+                                        style={{ border: 0 }}
+                                        allowFullScreen
+                                        loading="lazy"
+                                        className="h-full w-full object-cover"
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
                 {/* FAQ Section */}
-                <div className="mt-24 max-w-3xl mx-auto">
+                <div className="max-w-3xl mx-auto">
                     <SectionHeading title="Frequently Asked Questions" centered />
                     <div className="space-y-4">
                         {siteContent.faqs.map((faq, i) => (

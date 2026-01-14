@@ -56,6 +56,16 @@ export default function Home() {
               Est. 2014
             </motion.div>
 
+            <motion.div variants={fadeInUp} className="mb-8 relative w-64 md:w-80 h-auto aspect-[3/1]">
+              <Image
+                src="/VivaGymnastics.png"
+                alt="Viva Rhythmic Gymnastics"
+                fill
+                className="object-contain object-left"
+                priority
+              />
+            </motion.div>
+
             <motion.h1 variants={fadeInUp} className="font-display text-5xl md:text-7xl font-bold text-gray-900 leading-[1.1] mb-6">
               {siteContent.hero.headline}
             </motion.h1>
@@ -167,13 +177,7 @@ export default function Home() {
         </Container>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="py-24 bg-white overflow-hidden">
-        <Container>
-          <SectionHeading title="What Parents Say" centered />
-          <TestimonialCarousel testimonials={siteContent.testimonials} />
-        </Container>
-      </section>
+
 
       {/* GALLERY TEASER */}
       <section className="py-24 bg-brand-dark text-white relative isolate">

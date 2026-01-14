@@ -10,7 +10,8 @@ export function ContactForm() {
         email: "",
         phone: "",
         location: "Scarborough",
-        message: ""
+        message: "",
+        newsletter: false,
     });
     const [submitted, setSubmitted] = useState(false);
 
@@ -19,7 +20,7 @@ export function ContactForm() {
         setSubmitted(true);
         // Simulate submission or prepare mailto
         const subject = `Viva RGC Inquiry from ${formData.name}`;
-        const body = `Name: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nLocation Pref: ${formData.location}\n\nMessage:\n${formData.message}`;
+        const body = `Name: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nLocation Pref: ${formData.location}\nNewsletter Signup: ${formData.newsletter ? 'Yes' : 'No'}\n\nMessage:\n${formData.message}`;
 
         // In a real app, send to API. Here we provide mailto fallback.
         window.location.href = `mailto:${siteContent.brand.socials.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -41,6 +42,8 @@ export function ContactForm() {
 
     return (
         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+            <h3 className="font-display text-2xl font-bold text-brand-dark mb-6 text-center">Send us a Message</h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Parent's Name</label>
@@ -91,7 +94,7 @@ export function ContactForm() {
                 </div>
             </div>
 
-            <div className="mb-8">
+            <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
                 <textarea
                     required
@@ -101,6 +104,32 @@ export function ContactForm() {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 />
+            </div>
+
+            <div className="mb-8">
+                <label className="flex items-center gap-3 cursor-pointer group">
+                    <div className="relative">
+                        <input
+                            type="checkbox"
+                            className="peer sr-only"
+                            checked={formData.newsletter}
+                            onChange={(e) => setFormData({ ...formData, newsletter: e.target.checked })}
+                        />
+                        <div className="w-5 h-5 border-2 border-gray-300 rounded peer-checked:bg-brand peer-checked:border-brand transition-all" />
+                        <svg
+                            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <span className="text-gray-600 group-hover:text-gray-900 transition-colors select-none">
+                        Sign up for news and updates
+                    </span>
+                </label>
             </div>
 
             <Button type="submit" className="w-full">
