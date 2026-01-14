@@ -48,10 +48,10 @@ export const siteContent: SiteContent = {
     ],
     hero: {
         headline: "Rhythmic Gymnastics Training in Toronto",
-        subhead: "Beginner-friendly and competition-driven programs focused on confidence, artistry, and athletic excellence.",
-        primaryCta: "Book a Trial Class",
+        subhead: "Home to Team Canada gymnasts. Beginner-friendly and competition-driven programs focused on confidence, artistry, and athletic excellence.",
+        primaryCta: "Book a Free Trial Class",
         secondaryCta: "View Programs",
-        badgeText: "Est. 2024",
+        badgeText: "Est. 2014",
     },
     programs: [
         {
