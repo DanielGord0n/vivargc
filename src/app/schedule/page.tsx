@@ -2,7 +2,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ScheduleGrid } from "@/components/features/ScheduleGrid";
 import { Button } from "@/components/ui/Button";
-import { siteContent } from "@/content/siteContent";
+import { getSchedule } from "@/lib/content";
 import Link from "next/link";
 import { Metadata } from "next";
 
@@ -12,6 +12,9 @@ export const metadata: Metadata = {
 };
 
 export default function SchedulePage() {
+    // Get schedule from CMS
+    const schedule = getSchedule();
+
     return (
         <Container className="py-24">
             <SectionHeading
@@ -20,7 +23,7 @@ export default function SchedulePage() {
                 centered
             />
 
-            <ScheduleGrid schedule={siteContent.schedule} />
+            <ScheduleGrid schedule={schedule} />
 
             <div className="mt-16 bg-brand/5 p-8 rounded-2xl text-center border border-brand/10">
                 <h3 className="font-display text-2xl font-bold mb-4">Not sure which group is right for you?</h3>
