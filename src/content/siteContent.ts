@@ -37,21 +37,23 @@ export const siteContent: SiteContent = {
             id: "scarborough",
             name: "Scarborough",
             address: "291 Progress Ave, Scarborough, ON M1P 2Z2",
-            mapUrl: "https://maps.google.com/maps?q=291+Progress+Ave,+Scarborough,+ON+M1P+2Z2&t=&z=15&ie=UTF8&iwloc=&output=embed",
+            mapUrl: "https://www.google.com/maps/place/Viva+Rhythmic+Gymnastics/@43.7729479,-79.2703913,16z/data=!3m1!4b1!4m6!3m5!1s0x89d4d198535a4e09:0xe8f2c5144bbc830a!8m2!3d43.7729479!4d-79.2703913!16s%2Fg%2F11bxj823yl?entry=ttu&g_ep=EgoyMDI2MDEwNy4wIKXMDSoKLDEwMDc5MjA3MUgBUAM%3D",
+            mapEmbedUrl: "https://maps.google.com/maps?q=291+Progress+Ave,+Scarborough,+ON+M1P+2Z2&t=&z=15&ie=UTF8&iwloc=&output=embed",
         },
         {
-            id: "bayview",
-            name: "Bayview",
+            id: "bayview", // Keeping ID stable to avoid breaking other references if keys are used elsewhere (like schedule)
+            name: "North York", // Updated Name
             address: "2737 Bayview Avenue, Toronto, ON M2L 1C5",
-            mapUrl: "https://maps.google.com/maps?q=2737+Bayview+Avenue,+Toronto,+ON+M2L+1C5&t=&z=15&ie=UTF8&iwloc=&output=embed",
+            mapUrl: "https://www.google.com/maps/place/Viva+Rhythmic+Gymnastics+-+North+York/@43.7620432,-79.3871195,17.93z/data=!4m6!3m5!1s0x882b2d08ea8792f9:0x6fd3888472773796!8m2!3d43.7609803!4d-79.3859252!16s%2Fg%2F11mypm8lzr?entry=ttu&g_ep=EgoyMDI2MDEwNy4wIKXMDSoKLDEwMDc5MjA3MUgBUAM%3D",
+            mapEmbedUrl: "https://maps.google.com/maps?q=2737+Bayview+Avenue,+Toronto,+ON+M2L+1C5&t=&z=15&ie=UTF8&iwloc=&output=embed",
         },
     ],
     hero: {
         headline: "Rhythmic Gymnastics Training in Toronto",
-        subhead: "Beginner-friendly and competition-driven programs focused on confidence, artistry, and athletic excellence.",
-        primaryCta: "Book a Trial Class",
+        subhead: "Home to Team Canada gymnasts. Beginner-friendly and competition-driven programs focused on confidence, artistry, and athletic excellence.",
+        primaryCta: "Book a Free Trial Class",
         secondaryCta: "View Programs",
-        badgeText: "Est. 2024",
+        badgeText: "Est. 2014",
     },
     programs: [
         {
@@ -135,12 +137,16 @@ export const siteContent: SiteContent = {
         },
     ],
     gallery: [
-        { src: "/images/Viva3.png", category: "Training", alt: "Training session" },
-        { src: "/images/Viva6.png", category: "Performance", alt: "Stage performance" },
-        { src: "/images/Viva9.png", category: "Event", alt: "Competition event" },
-        { src: "/images/Viva8.png", category: "Training", alt: "Stretching" },
         { src: "/images/Viva1.png", category: "Performance", alt: "Ribbon routine" },
-        { src: "/images/Viva2.png", category: "Video", alt: "Highlight reel" },
+        { src: "/images/Viva2.png", category: "Training", alt: "Floor exercise" },
+        { src: "/images/Viva3.png", category: "Training", alt: "Training session" },
+        { src: "/images/Viva4.png", category: "Performance", alt: "Competition readiness" },
+        { src: "/images/Viva5.png", category: "Performance", alt: "Artistic pose" },
+        { src: "/images/Viva6.png", category: "Training", alt: "Flexibility training" },
+        { src: "/images/Viva8.png", category: "Training", alt: "Stretching" },
+        { src: "/images/Viva9.png", category: "Performance", alt: "Competition event" },
+        { src: "/images/Viva10.png", category: "Performance", alt: "Group routine" },
+        { src: "/images/Viva11.png", category: "Training", alt: "Balance work" },
     ],
     faqs: [
         {

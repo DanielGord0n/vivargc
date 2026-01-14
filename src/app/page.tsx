@@ -53,7 +53,17 @@ export default function Home() {
           >
             <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-blush/30 shadow-sm text-brand-dark text-sm font-medium mb-8">
               <Star className="w-4 h-4 fill-brand text-brand" />
-              {siteContent.hero.badgeText}
+              Est. 2014
+            </motion.div>
+
+            <motion.div variants={fadeInUp} className="mb-8 relative w-64 md:w-80 h-auto aspect-[3/1]">
+              <Image
+                src="/VivaGymnastics.png"
+                alt="Viva Rhythmic Gymnastics"
+                fill
+                className="object-contain object-left"
+                priority
+              />
             </motion.div>
 
             <motion.h1 variants={fadeInUp} className="font-display text-5xl md:text-7xl font-bold text-gray-900 leading-[1.1] mb-6">
@@ -108,18 +118,7 @@ export default function Home() {
                   className="object-cover"
                   priority
                 />
-                {/* Badge Overlay */}
-                <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-white/50">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wider">Join us today</p>
-                      <p className="font-display text-lg font-bold text-brand-dark">Trial Classes Available</p>
-                    </div>
-                    <div className="h-10 w-10 bg-brand rounded-full flex items-center justify-center text-white">
-                      <ArrowRight className="w-5 h-5" />
-                    </div>
-                  </div>
-                </div>
+
               </div>
             </div>
           </motion.div>
@@ -178,17 +177,11 @@ export default function Home() {
         </Container>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="py-24 bg-white overflow-hidden">
-        <Container>
-          <SectionHeading title="What Parents Say" centered />
-          <TestimonialCarousel testimonials={siteContent.testimonials} />
-        </Container>
-      </section>
+
 
       {/* GALLERY TEASER */}
       <section className="py-24 bg-brand-dark text-white relative isolate">
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none"></div>
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -244,7 +237,7 @@ export default function Home() {
             Join the Viva RGC family today and discover the joy of rhythmic gymnastics.
           </p>
           <Link href="/registration">
-            <Button size="lg" className="px-12">Book a Trial Class</Button>
+            <Button size="lg" className="px-12">Book a Free Trial Class</Button>
           </Link>
         </Container>
       </section>

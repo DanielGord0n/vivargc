@@ -3,7 +3,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ScheduleGrid } from "@/components/features/ScheduleGrid";
 import { Button } from "@/components/ui/Button";
 import { siteContent } from "@/content/siteContent";
-import { Download } from "lucide-react";
+import Link from "next/link";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -20,18 +20,14 @@ export default function SchedulePage() {
                 centered
             />
 
-            <div className="mb-12 flex justify-center">
-                <Button variant="outline" className="gap-2">
-                    <Download className="w-4 h-4" /> Download PDF Schedule
-                </Button>
-            </div>
-
             <ScheduleGrid schedule={siteContent.schedule} />
 
             <div className="mt-16 bg-brand/5 p-8 rounded-2xl text-center border border-brand/10">
                 <h3 className="font-display text-2xl font-bold mb-4">Not sure which group is right for you?</h3>
                 <p className="text-gray-600 mb-6">Contact us for a free assessment so we can place your child in the perfect level.</p>
-                <Button variant="primary">Contact Us</Button>
+                <Link href="/contact">
+                    <Button variant="primary">Contact Us</Button>
+                </Link>
             </div>
         </Container>
     );

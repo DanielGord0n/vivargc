@@ -13,7 +13,8 @@ export interface SocialLinks {
 export interface Location {
     name: string;
     address: string;
-    mapUrl: string; // Embed URL or Google Maps link
+    mapUrl: string;
+    mapEmbedUrl?: string; // Optional embed URL for iframes
     id: string;
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { GalleryItem } from "@/content/types";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,42 +13,46 @@ interface GalleryGridProps {
 }
 
 export function GalleryGrid({ items }: GalleryGridProps) {
-    const [filter, setFilter] = useState<string>("All");
     const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
 
-    const categories = ["All", ...Array.from(new Set(items.map(i => i.category)))];
-    const filteredItems = filter === "All" ? items : items.filter(i => i.category === filter);
+    // Keyboard Navigation
+    useEffect(() => {
+        if (!selectedItem) return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                setSelectedItem(null);
+                return;
+            }
+
+            const currentIndex = items.findIndex(i => i.src === selectedItem.src);
+            if (currentIndex === -1) return;
+
+            if (e.key === "ArrowLeft") {
+                const prevIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+                setSelectedItem(items[prevIndex]);
+            } else if (e.key === "ArrowRight") {
+                const nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+                setSelectedItem(items[nextIndex]);
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [selectedItem, items]);
 
     return (
         <div>
-            {/* Filters */}
-            <div className="flex flex-wrapjustify-center gap-3 mb-10">
-                {categories.map((cat) => (
-                    <button
-                        key={cat}
-                        onClick={() => setFilter(cat)}
-                        className={cn(
-                            "px-6 py-2 rounded-full text-sm font-medium transition-all duration-300",
-                            filter === cat
-                                ? "bg-brand text-white shadow-md"
-                                : "bg-white text-gray-500 hover:text-brand hover:bg-gray-50 border border-gray-200"
-                        )}
-                    >
-                        {cat}
-                    </button>
-                ))}
-            </div>
-
             {/* Grid */}
             <motion.div
                 layout
                 className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
             >
                 <AnimatePresence>
-                    {filteredItems.map((item, idx) => (
+                    {items.map((item, idx) => (
                         <motion.div
                             layout
-                            key={idx} // Using idx as key for simplicity in this demo, better to use unique ID
+                            key={item.src}
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
@@ -88,7 +92,32 @@ export function GalleryGrid({ items }: GalleryGridProps) {
                         >
                             <X className="w-8 h-8" />
                         </button>
-                        <div className="relative w-full max-w-4xl max-h-[85vh] aspect-video">
+
+                        {/* Nav Buttons (Visual cues) */}
+                        <button
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white p-4 hidden md:block"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                const currentIndex = items.findIndex(i => i.src === selectedItem.src);
+                                const prevIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+                                setSelectedItem(items[prevIndex]);
+                            }}
+                        >
+                            ‹
+                        </button>
+                        <button
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white p-4 hidden md:block"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                const currentIndex = items.findIndex(i => i.src === selectedItem.src);
+                                const nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+                                setSelectedItem(items[nextIndex]);
+                            }}
+                        >
+                            ›
+                        </button>
+
+                        <div className="relative w-full max-w-4xl max-h-[85vh] aspect-video" onClick={(e) => e.stopPropagation()}>
                             {/* Simplified lightbox - just re-render image or placeholder video */}
                             {selectedItem.category === 'Video' ? (
                                 <div className="w-full h-full bg-gray-900 flex items-center justify-center text-white">
