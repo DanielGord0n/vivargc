@@ -108,18 +108,7 @@ export default function Home() {
                   className="object-cover"
                   priority
                 />
-                {/* Badge Overlay */}
-                <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-white/50">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wider">Join us today</p>
-                      <p className="font-display text-lg font-bold text-brand-dark">Trial Classes Available</p>
-                    </div>
-                    <div className="h-10 w-10 bg-brand rounded-full flex items-center justify-center text-white">
-                      <ArrowRight className="w-5 h-5" />
-                    </div>
-                  </div>
-                </div>
+
               </div>
             </div>
           </motion.div>

@@ -135,12 +135,16 @@ export const siteContent: SiteContent = {
         },
     ],
     gallery: [
-        { src: "/images/Viva3.png", category: "Training", alt: "Training session" },
-        { src: "/images/Viva6.png", category: "Performance", alt: "Stage performance" },
-        { src: "/images/Viva9.png", category: "Event", alt: "Competition event" },
-        { src: "/images/Viva8.png", category: "Training", alt: "Stretching" },
         { src: "/images/Viva1.png", category: "Performance", alt: "Ribbon routine" },
-        { src: "/images/Viva2.png", category: "Video", alt: "Highlight reel" },
+        { src: "/images/Viva2.png", category: "Training", alt: "Floor exercise" },
+        { src: "/images/Viva3.png", category: "Training", alt: "Training session" },
+        { src: "/images/Viva4.png", category: "Performance", alt: "Competition readiness" },
+        { src: "/images/Viva5.png", category: "Performance", alt: "Artistic pose" },
+        { src: "/images/Viva6.png", category: "Training", alt: "Flexibility training" },
+        { src: "/images/Viva8.png", category: "Training", alt: "Stretching" },
+        { src: "/images/Viva9.png", category: "Performance", alt: "Competition event" },
+        { src: "/images/Viva10.png", category: "Performance", alt: "Group routine" },
+        { src: "/images/Viva11.png", category: "Training", alt: "Balance work" },
     ],
     faqs: [
         {
