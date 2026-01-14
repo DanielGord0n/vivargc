@@ -64,9 +64,7 @@ export default function RegistrationPage() {
                                 <Button size="lg">Contact Us to Register</Button>
                             </Link>
                         </div>
-                        <p className="mt-8 text-sm text-gray-500">
-                            Already a member? <a href="#" className="text-brand hover:underline">Login to Parent Portal</a> (Coming Soon)
-                        </p>
+
                     </LuxuryCard>
                 )}
             </div>

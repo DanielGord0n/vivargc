@@ -38,7 +38,8 @@ export interface Coach {
     name: string;
     role: string;
     bio: string;
-    image: string;
+    image: string; // Maintain legacy support or primary image
+    images?: string[]; // Multiple images for carousel
     credentials: string[];
     specialties: string[];
 }
