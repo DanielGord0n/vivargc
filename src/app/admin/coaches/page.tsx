@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Plus, Trash2, Save, Upload, X, GripVertical } from "lucide-react";
+import { Plus, Trash2, Save, Upload, X } from "lucide-react";
 
 interface Coach {
     id: string;
@@ -38,9 +38,20 @@ export default function CoachesAdmin() {
         }
     };
 
+    const createBackup = async () => {
+        try {
+            await fetch("/api/admin/backup", { method: "POST" });
+        } catch (error) {
+            console.error("Failed to create backup:", error);
+        }
+    };
+
     const saveCoaches = async (updatedCoaches: Coach[]) => {
         setSaving(true);
         try {
+            // Create backup before saving
+            await createBackup();
+
             const res = await fetch("/api/admin/content");
             const data = await res.json();
             data.coaches = updatedCoaches;
@@ -69,7 +80,7 @@ export default function CoachesAdmin() {
     };
 
     const handleEdit = (coach: Coach) => {
-        setEditingCoach({ ...coach });
+        setEditingCoach({ ...coach, images: [...coach.images] });
         setIsModalOpen(true);
     };
 
@@ -90,6 +101,11 @@ export default function CoachesAdmin() {
     const handleSaveCoach = () => {
         if (!editingCoach) return;
 
+        // Set primary image to first in images array if not set
+        if (!editingCoach.image && editingCoach.images.length > 0) {
+            editingCoach.image = editingCoach.images[0];
+        }
+
         const exists = coaches.find((c) => c.id === editingCoach.id);
         let updated: Coach[];
 
@@ -105,30 +121,54 @@ export default function CoachesAdmin() {
     };
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file || !editingCoach) return;
+        const files = e.target.files;
+        if (!files || files.length === 0 || !editingCoach) return;
 
-        const formData = new FormData();
-        formData.append("file", file);
+        for (const file of Array.from(files)) {
+            const formData = new FormData();
+            formData.append("file", file);
 
-        try {
-            const res = await fetch("/api/admin/upload", {
-                method: "POST",
-                body: formData,
-            });
-            const data = await res.json();
-
-            if (data.path) {
-                setEditingCoach({
-                    ...editingCoach,
-                    image: data.path,
-                    images: [...editingCoach.images, data.path],
+            try {
+                const res = await fetch("/api/admin/upload", {
+                    method: "POST",
+                    body: formData,
                 });
+                const data = await res.json();
+
+                if (data.path) {
+                    setEditingCoach(prev => {
+                        if (!prev) return prev;
+                        const newImages = [...prev.images, data.path];
+                        return {
+                            ...prev,
+                            images: newImages,
+                            image: prev.image || data.path, // Set primary if not set
+                        };
+                    });
+                }
+            } catch (error) {
+                console.error("Upload failed:", error);
+                alert("Failed to upload image");
             }
-        } catch (error) {
-            console.error("Upload failed:", error);
-            alert("Failed to upload image");
         }
+    };
+
+    const handleRemoveImage = (index: number) => {
+        if (!editingCoach) return;
+
+        const newImages = editingCoach.images.filter((_, i) => i !== index);
+        const newPrimary = newImages.length > 0 ? newImages[0] : "";
+
+        setEditingCoach({
+            ...editingCoach,
+            images: newImages,
+            image: editingCoach.image === editingCoach.images[index] ? newPrimary : editingCoach.image,
+        });
+    };
+
+    const handleSetPrimary = (imagePath: string) => {
+        if (!editingCoach) return;
+        setEditingCoach({ ...editingCoach, image: imagePath });
     };
 
     if (loading) {
@@ -158,25 +198,33 @@ export default function CoachesAdmin() {
                         key={coach.id}
                         className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-4"
                     >
-                        <div className="flex-shrink-0">
-                            {coach.image ? (
+                        {/* Image Thumbnails */}
+                        <div className="flex-shrink-0 flex gap-1">
+                            {coach.images.slice(0, 3).map((img, i) => (
                                 <Image
-                                    src={coach.image}
+                                    key={i}
+                                    src={img}
                                     alt={coach.name}
-                                    width={80}
-                                    height={80}
-                                    className="w-20 h-20 rounded-lg object-cover"
+                                    width={60}
+                                    height={60}
+                                    className={`w-14 h-14 rounded-lg object-cover ${i === 0 ? 'ring-2 ring-brand' : 'opacity-70'}`}
                                 />
-                            ) : (
-                                <div className="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center">
-                                    <span className="text-gray-400 text-2xl">?</span>
+                            ))}
+                            {coach.images.length > 3 && (
+                                <div className="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center text-sm text-gray-500">
+                                    +{coach.images.length - 3}
+                                </div>
+                            )}
+                            {coach.images.length === 0 && (
+                                <div className="w-14 h-14 rounded-lg bg-gray-200 flex items-center justify-center">
+                                    <span className="text-gray-400 text-xl">?</span>
                                 </div>
                             )}
                         </div>
                         <div className="flex-1 min-w-0">
                             <h3 className="font-semibold text-gray-900">{coach.name}</h3>
                             <p className="text-sm text-brand">{coach.role}</p>
-                            <p className="text-sm text-gray-500 truncate mt-1">{coach.bio}</p>
+                            <p className="text-xs text-gray-400 mt-1">{coach.images.length} image(s)</p>
                         </div>
                         <div className="flex items-center gap-2">
                             <button
@@ -200,7 +248,7 @@ export default function CoachesAdmin() {
             {isModalOpen && editingCoach && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-auto">
-                        <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
+                        <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white z-10">
                             <h2 className="text-xl font-bold">
                                 {editingCoach.name ? "Edit Coach" : "Add Coach"}
                             </h2>
@@ -212,36 +260,66 @@ export default function CoachesAdmin() {
                             </button>
                         </div>
 
-                        <div className="p-6 space-y-4">
-                            {/* Image Upload */}
+                        <div className="p-6 space-y-6">
+                            {/* Images Section */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Profile Image
+                                    Photos ({editingCoach.images.length})
                                 </label>
-                                <div className="flex items-center gap-4">
-                                    {editingCoach.image ? (
-                                        <Image
-                                            src={editingCoach.image}
-                                            alt="Preview"
-                                            width={100}
-                                            height={100}
-                                            className="w-24 h-24 rounded-lg object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-24 h-24 rounded-lg bg-gray-200 flex items-center justify-center">
-                                            <Upload className="w-8 h-8 text-gray-400" />
+                                <div className="grid grid-cols-4 gap-3 mb-3">
+                                    {editingCoach.images.map((img, i) => (
+                                        <div key={i} className="relative group">
+                                            <Image
+                                                src={img}
+                                                alt={`Photo ${i + 1}`}
+                                                width={120}
+                                                height={120}
+                                                className={`w-full aspect-square rounded-lg object-cover ${img === editingCoach.image
+                                                        ? 'ring-3 ring-brand'
+                                                        : 'ring-1 ring-gray-200'
+                                                    }`}
+                                            />
+                                            {/* Primary badge */}
+                                            {img === editingCoach.image && (
+                                                <div className="absolute top-1 left-1 bg-brand text-white text-[10px] px-1.5 py-0.5 rounded">
+                                                    Primary
+                                                </div>
+                                            )}
+                                            {/* Hover controls */}
+                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+                                                {img !== editingCoach.image && (
+                                                    <button
+                                                        onClick={() => handleSetPrimary(img)}
+                                                        className="px-2 py-1 bg-white text-xs rounded hover:bg-gray-100"
+                                                    >
+                                                        Set Primary
+                                                    </button>
+                                                )}
+                                                <button
+                                                    onClick={() => handleRemoveImage(i)}
+                                                    className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600"
+                                                >
+                                                    <Trash2 className="w-3 h-3" />
+                                                </button>
+                                            </div>
                                         </div>
-                                    )}
-                                    <label className="cursor-pointer px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors">
-                                        Upload Image
+                                    ))}
+                                    {/* Upload button */}
+                                    <label className="w-full aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-brand flex flex-col items-center justify-center cursor-pointer transition-colors">
+                                        <Upload className="w-6 h-6 text-gray-400" />
+                                        <span className="text-xs text-gray-400 mt-1">Add Photo</span>
                                         <input
                                             type="file"
                                             accept="image/*"
+                                            multiple
                                             onChange={handleImageUpload}
                                             className="hidden"
                                         />
                                     </label>
                                 </div>
+                                <p className="text-xs text-gray-500">
+                                    Click primary image to change. Hover to set primary or delete.
+                                </p>
                             </div>
 
                             {/* Name */}
