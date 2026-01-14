@@ -146,10 +146,10 @@ export const siteContent: SiteContent = {
         },
         bayview: {
             Tuesday: [
-                { time: "4:30 PM - 6:00 PM", group: "Recreational Open" },
+                { time: "7:00 PM - 10:00 PM", group: "Provincial Group" },
             ],
             Thursday: [
-                { time: "5:00 PM - 7:00 PM", group: "Pre-Competitive" },
+                { time: "5:00 PM - 7:00 PM", group: "Children Beginners" },
             ],
         },
     },
@@ -186,7 +186,7 @@ export const siteContent: SiteContent = {
         { src: "/images/Viva4.png", category: "Performance", alt: "Competition readiness" },
         { src: "/images/Viva5.png", category: "Performance", alt: "Artistic pose" },
         { src: "/images/Viva6.png", category: "Training", alt: "Flexibility training" },
-        { src: "/images/Viva8.png", category: "Training", alt: "Stretching" },
+
         { src: "/images/Viva9.png", category: "Performance", alt: "Competition event" },
         { src: "/images/Viva10.png", category: "Performance", alt: "Group routine" },
         { src: "/images/Viva11.png", category: "Training", alt: "Balance work" },
