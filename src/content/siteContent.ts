@@ -87,7 +87,7 @@ export const siteContent: SiteContent = {
             role: "Founder, Head Coach & Brevet Judge",
             bio: "As Founder and Head Coach at Viva RGC, Natalia Kachaiev takes great pride in developing national athletes who consistently attain the coveted High Performance status (top 15 in Canada) at both junior and senior levels and regularly become part of Canada’s National Team. Natalia has travelled extensively worldwide with Canada’s top individual RG athletes, competing at World Cups, the Pan American Games, and various international tournaments. Notably, in 2019, one of her gymnasts placed in the top 10 in the world. A highly respected official, Natalia holds a Level 4 Brevet Judge certification for RG groups and Level 3 for RG individuals, leading to frequent invitations to judge at national, provincial, and international tournaments. She is passionate about sharing her vast experience and deep understanding of world-class rhythmic gymnastics with her students.",
             image: "/images/NataliaKachaiev.jpeg",
-            images: ["/images/NataliaKachaiev.jpeg", "/images/Viva16.jpeg"],
+            images: ["/images/NataliaKachaiev.jpeg", "/images/NataliaKachaiev2.jpeg"],
             credentials: ["Brevet Judge (Level 4 Group/Level 3 Ind.)", "High Performance Coach", "Coach of Top 10 World Gymnast"],
             specialties: ["High Performance", "Elite Competition", "Judging Strategy"],
         },
@@ -168,6 +168,7 @@ export const siteContent: SiteContent = {
     gallery: [
         { src: "/images/VivaVideo.mp4", category: "Video", alt: "Viva Rhythmic Gymnastics Highlights" },
         { src: "/images/VivaVideo2.mp4", category: "Video", alt: "Competition Highlights" },
+        { src: "/images/NataliaKachaiev2.jpeg", category: "Performance", alt: "Coach Natalia" },
         { src: "/images/Viva17.jpeg", category: "Performance", alt: "Stage performance" },
         { src: "/images/Viva18.jpeg", category: "Training", alt: "Training moment" },
         { src: "/images/Viva19.jpeg", category: "Performance", alt: "Rhythmic gymnastics pose" },
