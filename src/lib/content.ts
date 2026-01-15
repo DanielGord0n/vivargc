@@ -171,3 +171,102 @@ export function getSchedule(): Schedule {
 export function getPrograms(): Program[] {
     return contentData.programs as Program[];
 }
+
+// Page content types
+export interface HomePageContent {
+    hero: {
+        headline: string;
+        subhead: string;
+        primaryCta: string;
+        secondaryCta: string;
+        heroImage: string;
+    };
+    galleryPreview: string[];
+    locations: {
+        id: string;
+        name: string;
+        address: string;
+    }[];
+    faqs: {
+        question: string;
+        answer: string;
+    }[];
+}
+
+export interface AboutPageContent {
+    header: {
+        title: string;
+        subtitle: string;
+    };
+    story: {
+        title?: string;
+        paragraph1?: string;
+        paragraph2?: string;
+        paragraphs?: string[];
+        image?: string;
+    };
+    quote: string | {
+        text: string;
+        author: string;
+    };
+    values: {
+        title: string;
+        description: string;
+        icon?: string;
+    }[];
+    cta: {
+        title: string;
+        description: string;
+        buttonText?: string;
+        buttonLink?: string;
+    };
+}
+
+// Get home page content
+export async function getHomePageContentAsync(): Promise<HomePageContent | null> {
+    if (!isSupabaseConfigured()) {
+        return null;
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from('page_content')
+            .select('content')
+            .eq('page_id', 'home')
+            .single();
+
+        if (error && error.code !== 'PGRST116') {
+            throw error;
+        }
+
+        return data?.content as HomePageContent || null;
+    } catch (error) {
+        console.error('Error fetching home page content:', error);
+        return null;
+    }
+}
+
+// Get about page content
+export async function getAboutPageContentAsync(): Promise<AboutPageContent | null> {
+    if (!isSupabaseConfigured()) {
+        return null;
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from('page_content')
+            .select('content')
+            .eq('page_id', 'about')
+            .single();
+
+        if (error && error.code !== 'PGRST116') {
+            throw error;
+        }
+
+        return data?.content as AboutPageContent || null;
+    } catch (error) {
+        console.error('Error fetching about page content:', error);
+        return null;
+    }
+}
+

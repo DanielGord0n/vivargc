@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter, Italiana } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -49,11 +47,7 @@ export default function RootLayout({
           "antialiased min-h-screen flex flex-col"
         )}
       >
-        <Navbar />
-        <main className="flex-grow pt-20">
-          {children}
-        </main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

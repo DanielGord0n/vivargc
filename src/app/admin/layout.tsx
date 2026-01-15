@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Home, Users, Image, Calendar, BookOpen, LogOut, Undo2, Lock } from "lucide-react";
+import { Home, Users, Image, Calendar, BookOpen, LogOut, Undo2, Lock, FileText, Info } from "lucide-react";
 
 const navItems = [
     { label: "Dashboard", href: "/admin", icon: Home },
+    { label: "Home Page", href: "/admin/home", icon: FileText },
+    { label: "About Page", href: "/admin/about", icon: Info },
     { label: "Coaches", href: "/admin/coaches", icon: Users },
     { label: "Gallery", href: "/admin/gallery", icon: Image },
     { label: "Schedule", href: "/admin/schedule", icon: Calendar },
@@ -15,7 +17,7 @@ const navItems = [
 ];
 
 // Simple password - in production, use proper authentication
-const ADMIN_PASSWORD = "viva2024";
+const ADMIN_PASSWORD = "Daisy";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -26,13 +28,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const [restoring, setRestoring] = useState(false);
 
     useEffect(() => {
-        // Check if already authenticated (stored in sessionStorage)
-        const auth = sessionStorage.getItem("admin_auth");
-        if (auth === "true") {
-            setIsAuthenticated(true);
-        }
-
-        // Check backup status
+        // Check backup status on mount
         checkBackupStatus();
     }, []);
 
@@ -50,7 +46,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         e.preventDefault();
         if (password === ADMIN_PASSWORD) {
             setIsAuthenticated(true);
-            sessionStorage.setItem("admin_auth", "true");
             setError("");
         } else {
             setError("Incorrect password");
@@ -59,7 +54,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     const handleLogout = () => {
         setIsAuthenticated(false);
-        sessionStorage.removeItem("admin_auth");
     };
 
     const handleUndo = async () => {
@@ -137,13 +131,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return (
         <div className="min-h-screen bg-gray-50 flex">
             {/* Sidebar */}
-            <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+            <aside className="w-64 bg-white border-r border-gray-200">
                 <div className="p-6 border-b border-gray-200">
                     <h1 className="text-xl font-bold text-brand">Viva RGC Admin</h1>
                     <p className="text-sm text-gray-500">Content Manager</p>
                 </div>
 
-                <nav className="flex-1 p-4 space-y-1">
+                <nav className="p-4 space-y-1">
                     {navItems.map((item) => {
                         const isActive = pathname === item.href ||
                             (item.href !== "/admin" && pathname.startsWith(item.href));

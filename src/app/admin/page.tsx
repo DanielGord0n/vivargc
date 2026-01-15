@@ -1,9 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { Users, Image, Calendar, BookOpen, ArrowRight } from "lucide-react";
+import { Users, Image, Calendar, BookOpen, ArrowRight, Home, Info } from "lucide-react";
 
 const sections = [
+    {
+        title: "Home Page",
+        description: "Edit hero, locations, and FAQs",
+        href: "/admin/home",
+        icon: Home,
+        color: "bg-brand",
+    },
+    {
+        title: "About Page",
+        description: "Edit story, values, and CTA",
+        href: "/admin/about",
+        icon: Info,
+        color: "bg-pink-500",
+    },
     {
         title: "Coaches",
         description: "Add, edit, or remove coach profiles",
