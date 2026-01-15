@@ -17,6 +17,7 @@ export interface GalleryItem {
     src: string;
     category: string;
     alt: string;
+    pinned?: boolean;
 }
 
 export interface ScheduleItem {
@@ -71,17 +72,36 @@ export async function getGalleryAsync(): Promise<GalleryItem[]> {
         return contentData.gallery as GalleryItem[];
     }
 
-    const { data, error } = await supabase
+    // Try with pinned ordering first, fall back to simple query if column doesn't exist
+    let { data, error } = await supabase
         .from('gallery')
         .select('*')
+        .order('pinned', { ascending: false, nullsFirst: false })
         .order('created_at');
+
+    // If pinned column doesn't exist, try without it
+    if (error && error.code === '42703') {
+        const fallback = await supabase
+            .from('gallery')
+            .select('*')
+            .order('created_at');
+        data = fallback.data;
+        error = fallback.error;
+    }
 
     if (error) {
         console.error('Error fetching gallery:', error);
         return contentData.gallery as GalleryItem[];
     }
 
-    return data || [];
+    // Sort client-side with pinned first (in case pinned column exists)
+    const sorted = (data || []).sort((a: GalleryItem, b: GalleryItem) => {
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+        return 0;
+    });
+
+    return sorted;
 }
 
 // Get schedule

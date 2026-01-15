@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Plus, Trash2, Upload, X, Play, Expand, ChevronLeft, ChevronRight } from "lucide-react";
+import { Trash2, Upload, X, Play, Expand, ChevronLeft, ChevronRight, Pin, PinOff } from "lucide-react";
 
 interface GalleryItem {
     id: string;
     src: string;
     category: string;
     alt: string;
+    pinned?: boolean;
 }
 
 export default function GalleryAdmin() {
@@ -26,7 +27,13 @@ export default function GalleryAdmin() {
         try {
             const res = await fetch("/api/admin/content");
             const data = await res.json();
-            setGallery(data.gallery || []);
+            // Sort with pinned items first
+            const sorted = (data.gallery || []).sort((a: GalleryItem, b: GalleryItem) => {
+                if (a.pinned && !b.pinned) return -1;
+                if (!a.pinned && b.pinned) return 1;
+                return 0;
+            });
+            setGallery(sorted);
         } catch (error) {
             console.error("Failed to fetch gallery:", error);
         } finally {
@@ -42,7 +49,7 @@ export default function GalleryAdmin() {
         }
     };
 
-    const saveGallery = async (updatedGallery: GalleryItem[]) => {
+    const saveGallery = async (updatedGallery: GalleryItem[], showAlert = true) => {
         setSaving(true);
         try {
             await createBackup();
@@ -58,7 +65,7 @@ export default function GalleryAdmin() {
             });
 
             setGallery(updatedGallery);
-            alert("Gallery saved successfully!");
+            if (showAlert) alert("Gallery saved successfully!");
         } catch (error) {
             console.error("Failed to save:", error);
             alert("Failed to save. Please try again.");
@@ -72,6 +79,22 @@ export default function GalleryAdmin() {
             const updated = gallery.filter((item) => item.id !== id);
             saveGallery(updated);
         }
+    };
+
+    const handleTogglePin = async (id: string) => {
+        const updated = gallery.map((item) => {
+            if (item.id === id) {
+                return { ...item, pinned: !item.pinned };
+            }
+            return item;
+        });
+        // Sort with pinned first
+        updated.sort((a, b) => {
+            if (a.pinned && !b.pinned) return -1;
+            if (!a.pinned && b.pinned) return 1;
+            return 0;
+        });
+        await saveGallery(updated, false);
     };
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,6 +123,7 @@ export default function GalleryAdmin() {
                         src: data.path,
                         category: isVideo ? "Video" : "Performance",
                         alt: file.name.replace(/\.[^/.]+$/, ""),
+                        pinned: false,
                     });
                 }
             }
@@ -138,6 +162,8 @@ export default function GalleryAdmin() {
         }
     };
 
+    const pinnedCount = gallery.filter(item => item.pinned).length;
+
     if (loading) {
         return <div className="text-center py-12">Loading...</div>;
     }
@@ -148,7 +174,7 @@ export default function GalleryAdmin() {
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900">Gallery</h1>
                     <p className="text-gray-600 mt-1">
-                        {gallery.length} items • Click to preview, hover to delete
+                        {gallery.length} items • {pinnedCount} pinned • Click to preview
                     </p>
                 </div>
                 <label className={`flex items-center gap-2 bg-brand text-white px-4 py-2 rounded-lg hover:bg-brand/90 transition-colors cursor-pointer ${uploading ? 'opacity-50' : ''}`}>
@@ -170,7 +196,7 @@ export default function GalleryAdmin() {
                 {gallery.map((item, index) => (
                     <div
                         key={item.id}
-                        className="group relative aspect-square bg-gray-100 rounded-xl overflow-hidden cursor-pointer"
+                        className={`group relative aspect-square bg-gray-100 rounded-xl overflow-hidden cursor-pointer ${item.pinned ? 'ring-2 ring-brand ring-offset-2' : ''}`}
                         onClick={() => openLightbox(index)}
                     >
                         {isVideo(item.src) ? (
@@ -194,6 +220,13 @@ export default function GalleryAdmin() {
                             />
                         )}
 
+                        {/* Pinned indicator */}
+                        {item.pinned && (
+                            <div className="absolute top-2 left-2 bg-brand text-white p-1.5 rounded-full">
+                                <Pin className="w-4 h-4" />
+                            </div>
+                        )}
+
                         {/* Video indicator */}
                         {isVideo(item.src) && (
                             <div className="absolute top-2 right-2 bg-black/60 p-1.5 rounded-full">
@@ -202,24 +235,34 @@ export default function GalleryAdmin() {
                         )}
 
                         {/* Hover overlay */}
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleTogglePin(item.id);
+                                }}
+                                className={`p-2 rounded-full transition-colors ${item.pinned ? 'bg-brand text-white hover:bg-brand/80' : 'bg-white text-gray-900 hover:bg-gray-100'}`}
+                                title={item.pinned ? "Unpin" : "Pin to top"}
+                            >
+                                {item.pinned ? <PinOff className="w-4 h-4" /> : <Pin className="w-4 h-4" />}
+                            </button>
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     openLightbox(index);
                                 }}
-                                className="p-3 bg-white text-gray-900 rounded-full hover:bg-gray-100 transition-colors"
+                                className="p-2 bg-white text-gray-900 rounded-full hover:bg-gray-100 transition-colors"
                             >
-                                <Expand className="w-5 h-5" />
+                                <Expand className="w-4 h-4" />
                             </button>
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handleDelete(item.id);
                                 }}
-                                className="p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                                className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
                             >
-                                <Trash2 className="w-5 h-5" />
+                                <Trash2 className="w-4 h-4" />
                             </button>
                         </div>
 
@@ -286,6 +329,7 @@ export default function GalleryAdmin() {
                     {/* Counter */}
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm">
                         {lightboxIndex + 1} / {gallery.length}
+                        {gallery[lightboxIndex].pinned && " • 📌 Pinned"}
                     </div>
                 </div>
             )}
