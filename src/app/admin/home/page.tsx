@@ -65,6 +65,7 @@ export default function HomeAdmin() {
                         ...defaultContent,
                         ...data.content,
                         hero: { ...defaultContent.hero, ...data.content.hero },
+                        galleryPreview: data.content.galleryPreview || defaultContent.galleryPreview,
                     });
                 }
             }
