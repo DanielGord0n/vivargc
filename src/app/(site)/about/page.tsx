@@ -46,7 +46,7 @@ async function getAboutContent(): Promise<AboutPageContent> {
 
         if (supabaseUrl && supabaseKey) {
             const res = await fetch(
-                `${supabaseUrl}/rest/v1/page_content?page_name=eq.about&select=content`,
+                `${supabaseUrl}/rest/v1/page_content?page_id=eq.about&select=content`,
                 {
                     headers: {
                         'apikey': supabaseKey,

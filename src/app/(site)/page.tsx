@@ -39,7 +39,7 @@ async function getHomeContent(): Promise<HomePageContent> {
 
     if (supabaseUrl && supabaseKey) {
       const res = await fetch(
-        `${supabaseUrl}/rest/v1/page_content?page_name=eq.home&select=content`,
+        `${supabaseUrl}/rest/v1/page_content?page_id=eq.home&select=content`,
         {
           headers: {
             'apikey': supabaseKey,
