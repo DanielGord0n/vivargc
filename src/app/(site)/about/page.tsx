@@ -38,21 +38,29 @@ const defaultContent: AboutPageContent = {
     },
 };
 
-// Fetch about page content using internal API
+// Fetch about page content directly from Supabase
 async function getAboutContent(): Promise<AboutPageContent> {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ||
-            process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
-            'http://localhost:3000';
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-        const res = await fetch(`${baseUrl}/api/admin/pages/about`, {
-            cache: 'no-store',
-        });
+        if (supabaseUrl && supabaseKey) {
+            const res = await fetch(
+                `${supabaseUrl}/rest/v1/page_content?page_name=eq.about&select=content`,
+                {
+                    headers: {
+                        'apikey': supabaseKey,
+                        'Authorization': `Bearer ${supabaseKey}`,
+                    },
+                    cache: 'no-store',
+                }
+            );
 
-        if (res.ok) {
-            const data = await res.json();
-            if (data.content && Object.keys(data.content).length > 0) {
-                return { ...defaultContent, ...data.content };
+            if (res.ok) {
+                const rows = await res.json();
+                if (rows.length > 0 && rows[0].content) {
+                    return { ...defaultContent, ...rows[0].content };
+                }
             }
         }
     } catch (error) {

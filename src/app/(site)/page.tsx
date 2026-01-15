@@ -30,29 +30,38 @@ const defaultHomeContent: HomePageContent = {
   faqs: siteContent.faqs,
 };
 
-// Fetch home page content using internal API (works reliably)
+// Fetch home page content directly from Supabase
 async function getHomeContent(): Promise<HomePageContent> {
   try {
-    // Use the internal API which is confirmed working
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ||
-      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
-      'http://localhost:3000';
+    // Direct Supabase query - more reliable than internal API on Vercel
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-    const res = await fetch(`${baseUrl}/api/admin/pages/home`, {
-      cache: 'no-store',
-    });
+    if (supabaseUrl && supabaseKey) {
+      const res = await fetch(
+        `${supabaseUrl}/rest/v1/page_content?page_name=eq.home&select=content`,
+        {
+          headers: {
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`,
+          },
+          cache: 'no-store',
+        }
+      );
 
-    if (res.ok) {
-      const data = await res.json();
-      if (data.content && Object.keys(data.content).length > 0) {
-        return {
-          ...defaultHomeContent,
-          ...data.content,
-          hero: { ...defaultHomeContent.hero, ...(data.content.hero || {}) },
-          galleryPreview: data.content.galleryPreview || defaultHomeContent.galleryPreview,
-          locations: data.content.locations || defaultHomeContent.locations,
-          faqs: data.content.faqs || defaultHomeContent.faqs,
-        };
+      if (res.ok) {
+        const rows = await res.json();
+        if (rows.length > 0 && rows[0].content) {
+          const data = rows[0].content;
+          return {
+            ...defaultHomeContent,
+            ...data,
+            hero: { ...defaultHomeContent.hero, ...(data.hero || {}) },
+            galleryPreview: data.galleryPreview || defaultHomeContent.galleryPreview,
+            locations: data.locations || defaultHomeContent.locations,
+            faqs: data.faqs || defaultHomeContent.faqs,
+          };
+        }
       }
     }
   } catch (error) {
