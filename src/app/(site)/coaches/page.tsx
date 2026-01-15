@@ -1,7 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CoachCard } from "@/components/features/CoachCard";
-import { siteContent } from "@/content/siteContent";
+import { getCoachesAsync } from "@/lib/content";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,7 +9,13 @@ export const metadata: Metadata = {
     description: "Meet our team of national-level coaches dedicated to your child's success.",
 };
 
-export default function CoachesPage() {
+// Force dynamic rendering to fetch from Supabase on each request
+export const dynamic = 'force-dynamic';
+
+export default async function CoachesPage() {
+    // Get coaches from Supabase
+    const coaches = await getCoachesAsync();
+
     return (
         <Container className="py-24">
             <SectionHeading
@@ -19,8 +25,8 @@ export default function CoachesPage() {
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {siteContent.coaches.map((coach) => (
-                    <CoachCard key={coach.name} coach={coach} />
+                {coaches.map((coach) => (
+                    <CoachCard key={coach.id} coach={coach} />
                 ))}
                 {/* Placeholder for hiring or future coaches */}
                 <div className="bg-gray-50 rounded-2xl p-8 flex flex-col items-center justify-center text-center border-2 border-dashed border-gray-200 min-h-[400px]">

@@ -1,62 +1,87 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { siteContent } from "@/content/siteContent";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { LuxuryCard } from "@/components/ui/LuxuryCard";
 import { ProgramCard } from "@/components/features/ProgramCard";
-import { TestimonialCarousel } from "@/components/features/TestimonialCarousel";
-import { ArrowRight, MapPin, CheckCircle, Star, Calendar } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ArrowRight, MapPin, CheckCircle, Star } from "lucide-react";
+import { HomePageContent } from "@/lib/content";
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" as any } }
+// Force dynamic rendering to fetch from Supabase on each request
+export const dynamic = 'force-dynamic';
+
+// Default content from siteContent
+const defaultHomeContent: HomePageContent = {
+  hero: {
+    headline: siteContent.hero.headline,
+    subhead: siteContent.hero.subhead,
+    primaryCta: siteContent.hero.primaryCta,
+    secondaryCta: siteContent.hero.secondaryCta,
+    heroImage: "/images/Viva4.png",
+  },
+  galleryPreview: ["/images/Viva1.png", "/images/Viva2.png", "/images/Viva3.png", "/images/Viva8.png"],
+  locations: siteContent.locations.map(loc => ({
+    id: loc.id,
+    name: loc.name,
+    address: loc.address,
+  })),
+  faqs: siteContent.faqs,
 };
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2
+// Fetch home page content using internal API (works reliably)
+async function getHomeContent(): Promise<HomePageContent> {
+  try {
+    // Use the internal API which is confirmed working
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ||
+      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
+      'http://localhost:3000';
+
+    const res = await fetch(`${baseUrl}/api/admin/pages/home`, {
+      cache: 'no-store',
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.content && Object.keys(data.content).length > 0) {
+        return {
+          ...defaultHomeContent,
+          ...data.content,
+          hero: { ...defaultHomeContent.hero, ...(data.content.hero || {}) },
+          galleryPreview: data.content.galleryPreview || defaultHomeContent.galleryPreview,
+          locations: data.content.locations || defaultHomeContent.locations,
+          faqs: data.content.faqs || defaultHomeContent.faqs,
+        };
+      }
     }
+  } catch (error) {
+    console.error('Error fetching home content:', error);
   }
-};
 
-export default function Home() {
+  return defaultHomeContent;
+}
+
+export default async function Home() {
+  // Get dynamic content from API
+  const content = await getHomeContent();
+
   return (
     <div className="overflow-hidden">
       {/* HERO SECTION */}
       <section className="relative min-h-[90vh] flex items-center pt-20 pb-32 overflow-hidden bg-gradient-to-b from-white via-white to-blush/10">
         {/* Abstract Background Shapes */}
-        <motion.div
-          animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-20 right-[-10%] w-[500px] h-[500px] bg-blush/20 rounded-full blur-3xl -z-10"
-        />
-        <motion.div
-          animate={{ y: [0, 30, 0], rotate: [0, -5, 0] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute bottom-0 left-[-5%] w-[300px] h-[300px] bg-brand/5 rounded-full blur-3xl -z-10"
-        />
+        <div className="absolute top-20 right-[-10%] w-[500px] h-[500px] bg-blush/20 rounded-full blur-3xl -z-10 animate-pulse" />
+        <div className="absolute bottom-0 left-[-5%] w-[300px] h-[300px] bg-brand/5 rounded-full blur-3xl -z-10" />
 
         <Container className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-          >
-            <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-blush/30 shadow-sm text-brand-dark text-sm font-medium mb-8">
+          <div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-blush/30 shadow-sm text-brand-dark text-sm font-medium mb-8">
               <Star className="w-4 h-4 fill-brand text-brand" />
               Est. 2014
-            </motion.div>
+            </div>
 
-            <motion.div variants={fadeInUp} className="mb-8 relative w-64 md:w-80 h-auto aspect-[3/1]">
+            <div className="mb-8 relative w-64 md:w-80 h-auto aspect-[3/1]">
               <Image
                 src="/VivaGymnastics.png"
                 alt="Viva Rhythmic Gymnastics"
@@ -64,47 +89,42 @@ export default function Home() {
                 className="object-contain object-left"
                 priority
               />
-            </motion.div>
+            </div>
 
-            <motion.h1 variants={fadeInUp} className="font-display text-5xl md:text-7xl font-bold text-gray-900 leading-[1.1] mb-6">
-              {siteContent.hero.headline}
-            </motion.h1>
+            <h1 className="font-display text-5xl md:text-7xl font-bold text-gray-900 leading-[1.1] mb-6">
+              {content.hero.headline}
+            </h1>
 
-            <motion.p variants={fadeInUp} className="text-xl text-gray-600 mb-10 leading-relaxed max-w-lg">
-              {siteContent.hero.subhead}
-            </motion.p>
+            <p className="text-xl text-gray-600 mb-10 leading-relaxed max-w-lg">
+              {content.hero.subhead}
+            </p>
 
-            <motion.div variants={fadeInUp} className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4">
               <Link href="/contact">
                 <Button size="lg" className="shadow-xl shadow-brand/20">
-                  {siteContent.hero.primaryCta}
+                  {content.hero.primaryCta}
                 </Button>
               </Link>
               <Link href="/programs">
                 <Button variant="outline" size="lg">
-                  {siteContent.hero.secondaryCta}
+                  {content.hero.secondaryCta}
                 </Button>
               </Link>
-            </motion.div>
+            </div>
 
             {/* Trust Indicators */}
-            <motion.div variants={fadeInUp} className="mt-12 flex flex-wrap gap-4 md:gap-8 border-t border-gray-100 pt-8">
+            <div className="mt-12 flex flex-wrap gap-4 md:gap-8 border-t border-gray-100 pt-8">
               {["National Certified Coaches", "Beginner Friendly", "Performance Focused"].map((text) => (
                 <div key={text} className="flex items-center gap-2 text-sm font-medium text-gray-500">
                   <CheckCircle className="w-4 h-4 text-brand" />
                   {text}
                 </div>
               ))}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Hero Image */}
-          <motion.div
-            initial={{ opacity: 0, x: 50, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="relative"
-          >
+          <div className="relative">
             <div className="relative aspect-[4/5] w-full max-w-md mx-auto lg:ml-auto">
               {/* Decorative border offset */}
               <div className="absolute inset-0 border-2 border-brand/20 rounded-[2rem] transform translate-x-4 translate-y-4" />
@@ -112,16 +132,15 @@ export default function Home() {
 
               <div className="relative h-full w-full rounded-[2rem] overflow-hidden shadow-2xl">
                 <Image
-                  src="/images/Viva4.png"
+                  src={content.hero.heroImage}
                   alt="Rhythmic Gymnastics"
                   fill
                   className="object-cover"
                   priority
                 />
-
               </div>
             </div>
-          </motion.div>
+          </div>
         </Container>
       </section>
 
@@ -159,7 +178,7 @@ export default function Home() {
             subtitle="Conveniently located in Scarborough and Bayview."
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {siteContent.locations.map((loc) => (
+            {content.locations.map((loc) => (
               <LuxuryCard key={loc.id} className="flex items-start gap-4">
                 <div className="h-12 w-12 bg-blush/20 rounded-full flex items-center justify-center shrink-0">
                   <MapPin className="w-6 h-6 text-brand" />
@@ -177,8 +196,6 @@ export default function Home() {
         </Container>
       </section>
 
-
-
       {/* GALLERY TEASER */}
       <section className="py-24 bg-brand-dark text-white relative isolate">
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none"></div>
@@ -194,7 +211,7 @@ export default function Home() {
               </Link>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {["/images/Viva1.png", "/images/Viva2.png", "/images/Viva3.png", "/images/Viva8.png"].map((src, i) => (
+              {content.galleryPreview.map((src, i) => (
                 <div key={i} className={`relative aspect-square rounded-xl overflow-hidden ${i % 2 === 0 ? 'translate-y-8' : ''}`}>
                   <Image
                     src={src}
@@ -214,7 +231,7 @@ export default function Home() {
         <Container className="max-w-3xl">
           <SectionHeading title="Common Questions" centered />
           <div className="space-y-4">
-            {siteContent.faqs.slice(0, 3).map((faq, i) => (
+            {content.faqs.map((faq, i) => (
               <div key={i} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="font-bold text-lg mb-2">{faq.question}</h3>
                 <p className="text-gray-600">{faq.answer}</p>

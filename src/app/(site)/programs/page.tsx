@@ -1,7 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProgramCard } from "@/components/features/ProgramCard";
-import { siteContent } from "@/content/siteContent";
+import { getProgramsAsync } from "@/lib/content";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,7 +9,13 @@ export const metadata: Metadata = {
     description: "Rhythmic gymnastics programs for all ages and skill levels.",
 };
 
-export default function ProgramsPage() {
+// Force dynamic rendering to fetch from Supabase on each request
+export const dynamic = 'force-dynamic';
+
+export default async function ProgramsPage() {
+    // Get programs from Supabase
+    const programs = await getProgramsAsync();
+
     return (
         <Container className="py-24">
             <SectionHeading
@@ -19,8 +25,8 @@ export default function ProgramsPage() {
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-24">
-                {siteContent.programs.map((program) => (
-                    <ProgramCard key={program.title} program={program} />
+                {programs.map((program) => (
+                    <ProgramCard key={program.id} program={program} />
                 ))}
             </div>
 
