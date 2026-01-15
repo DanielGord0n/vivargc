@@ -2,7 +2,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ScheduleGrid } from "@/components/features/ScheduleGrid";
 import { Button } from "@/components/ui/Button";
-import { getSchedule } from "@/lib/content";
+import { getScheduleAsync } from "@/lib/content";
 import Link from "next/link";
 import { Metadata } from "next";
 
@@ -11,9 +11,12 @@ export const metadata: Metadata = {
     description: "Weekly schedule for recreational and competitive rhythmic gymnastics classes.",
 };
 
-export default function SchedulePage() {
-    // Get schedule from CMS
-    const schedule = getSchedule();
+// Force dynamic rendering to fetch from Supabase on each request
+export const dynamic = 'force-dynamic';
+
+export default async function SchedulePage() {
+    // Get schedule from Supabase
+    const schedule = await getScheduleAsync();
 
     return (
         <Container className="py-24">

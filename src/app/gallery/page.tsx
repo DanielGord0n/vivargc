@@ -1,7 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { GalleryGrid } from "@/components/features/GalleryGrid";
-import { getGallery } from "@/lib/content";
+import { getGalleryAsync } from "@/lib/content";
 import { siteContent } from "@/content/siteContent";
 import { Metadata } from "next";
 
@@ -10,9 +10,12 @@ export const metadata: Metadata = {
     description: "Photos and videos of our gymnasts in training and performance.",
 };
 
-export default function GalleryPage() {
-    // Get gallery items from CMS
-    const cmsGallery = getGallery();
+// Force dynamic rendering to fetch from Supabase on each request
+export const dynamic = 'force-dynamic';
+
+export default async function GalleryPage() {
+    // Get gallery items from Supabase
+    const cmsGallery = await getGalleryAsync();
 
     // Map to the format expected by GalleryGrid
     const items = cmsGallery.map(item => ({

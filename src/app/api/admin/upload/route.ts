@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const UPLOAD_DIR = path.join(process.cwd(), 'public/images');
+import { supabase } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
     try {
@@ -13,19 +10,31 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
         }
 
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
         // Generate unique filename
         const ext = file.name.split('.').pop();
         const filename = `upload_${Date.now()}.${ext}`;
-        const filepath = path.join(UPLOAD_DIR, filename);
 
-        fs.writeFileSync(filepath, buffer);
+        // Upload to Supabase Storage
+        const { data, error } = await supabase.storage
+            .from('images')
+            .upload(filename, file, {
+                cacheControl: '3600',
+                upsert: false,
+            });
+
+        if (error) {
+            console.error('Upload error:', error);
+            return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
+        }
+
+        // Get public URL
+        const { data: urlData } = supabase.storage
+            .from('images')
+            .getPublicUrl(filename);
 
         return NextResponse.json({
             success: true,
-            path: `/images/${filename}`,
+            path: urlData.publicUrl,
             filename
         });
     } catch (error) {

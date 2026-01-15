@@ -1,7 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CoachCard } from "@/components/features/CoachCard";
-import { getCoaches } from "@/lib/content";
+import { getCoachesAsync } from "@/lib/content";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,9 +9,12 @@ export const metadata: Metadata = {
     description: "Meet our team of national-level coaches dedicated to your child's success.",
 };
 
-export default function CoachesPage() {
-    // Get coaches from CMS
-    const coaches = getCoaches();
+// Force dynamic rendering to fetch from Supabase on each request
+export const dynamic = 'force-dynamic';
+
+export default async function CoachesPage() {
+    // Get coaches from Supabase
+    const coaches = await getCoachesAsync();
 
     return (
         <Container className="py-24">

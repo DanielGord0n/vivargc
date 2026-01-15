@@ -1,7 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProgramCard } from "@/components/features/ProgramCard";
-import { getPrograms } from "@/lib/content";
+import { getProgramsAsync } from "@/lib/content";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,9 +9,12 @@ export const metadata: Metadata = {
     description: "Rhythmic gymnastics programs for all ages and skill levels.",
 };
 
-export default function ProgramsPage() {
-    // Get programs from CMS
-    const programs = getPrograms();
+// Force dynamic rendering to fetch from Supabase on each request
+export const dynamic = 'force-dynamic';
+
+export default async function ProgramsPage() {
+    // Get programs from Supabase
+    const programs = await getProgramsAsync();
 
     return (
         <Container className="py-24">

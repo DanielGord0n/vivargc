@@ -1,8 +1,6 @@
-import contentData from '@/data/content.json';
+import { supabase } from './supabase';
 
-// This module provides typed access to the CMS content
-// The data is read at build time from content.json
-
+// Types
 export interface Coach {
     id: string;
     name: string;
@@ -39,29 +37,117 @@ export interface Program {
     description: string;
 }
 
-export interface Content {
-    coaches: Coach[];
-    gallery: GalleryItem[];
-    schedule: Schedule;
-    programs: Program[];
+// Fallback data from JSON (used at build time if Supabase isn't configured)
+import contentData from '@/data/content.json';
+
+// Check if Supabase is configured
+const isSupabaseConfigured = () => {
+    return process.env.NEXT_PUBLIC_SUPABASE_URL &&
+        process.env.NEXT_PUBLIC_SUPABASE_URL !== 'your_supabase_url_here';
+};
+
+// Get coaches
+export async function getCoachesAsync(): Promise<Coach[]> {
+    if (!isSupabaseConfigured()) {
+        return contentData.coaches as Coach[];
+    }
+
+    const { data, error } = await supabase
+        .from('coaches')
+        .select('*')
+        .order('created_at');
+
+    if (error) {
+        console.error('Error fetching coaches:', error);
+        return contentData.coaches as Coach[];
+    }
+
+    return data || [];
 }
 
-// Export the content with proper types
-export const cmsContent: Content = contentData as Content;
+// Get gallery
+export async function getGalleryAsync(): Promise<GalleryItem[]> {
+    if (!isSupabaseConfigured()) {
+        return contentData.gallery as GalleryItem[];
+    }
 
-// Helper functions
+    const { data, error } = await supabase
+        .from('gallery')
+        .select('*')
+        .order('created_at');
+
+    if (error) {
+        console.error('Error fetching gallery:', error);
+        return contentData.gallery as GalleryItem[];
+    }
+
+    return data || [];
+}
+
+// Get schedule
+export async function getScheduleAsync(): Promise<Schedule> {
+    if (!isSupabaseConfigured()) {
+        return contentData.schedule as Schedule;
+    }
+
+    const { data, error } = await supabase
+        .from('schedule')
+        .select('*');
+
+    if (error) {
+        console.error('Error fetching schedule:', error);
+        return contentData.schedule as Schedule;
+    }
+
+    // Transform to expected format
+    const schedule: Schedule = {
+        scarborough: {},
+        bayview: {},
+    };
+
+    (data || []).forEach((item: { location: string; day: string; time: string; group_name: string }) => {
+        const loc = item.location as 'scarborough' | 'bayview';
+        if (!schedule[loc][item.day]) {
+            schedule[loc][item.day] = [];
+        }
+        schedule[loc][item.day].push({ time: item.time, group: item.group_name });
+    });
+
+    return schedule;
+}
+
+// Get programs
+export async function getProgramsAsync(): Promise<Program[]> {
+    if (!isSupabaseConfigured()) {
+        return contentData.programs as Program[];
+    }
+
+    const { data, error } = await supabase
+        .from('programs')
+        .select('*')
+        .order('created_at');
+
+    if (error) {
+        console.error('Error fetching programs:', error);
+        return contentData.programs as Program[];
+    }
+
+    return data || [];
+}
+
+// Synchronous versions (for static generation fallback)
 export function getCoaches(): Coach[] {
-    return cmsContent.coaches;
+    return contentData.coaches as Coach[];
 }
 
 export function getGallery(): GalleryItem[] {
-    return cmsContent.gallery;
+    return contentData.gallery as GalleryItem[];
 }
 
 export function getSchedule(): Schedule {
-    return cmsContent.schedule;
+    return contentData.schedule as Schedule;
 }
 
 export function getPrograms(): Program[] {
-    return cmsContent.programs;
+    return contentData.programs as Program[];
 }
