@@ -14,26 +14,45 @@ export function ContactForm() {
         newsletter: false,
     });
     const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSubmitted(true);
-        // Simulate submission or prepare mailto
-        const subject = `Viva RGC Inquiry from ${formData.name}`;
-        const body = `Name: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nLocation Pref: ${formData.location}\nNewsletter Signup: ${formData.newsletter ? 'Yes' : 'No'}\n\nMessage:\n${formData.message}`;
+        setLoading(true);
+        setError("");
 
-        // In a real app, send to API. Here we provide mailto fallback.
-        window.location.href = `mailto:${siteContent.brand.socials.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        try {
+            const res = await fetch("/api/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+
+            if (res.ok) {
+                setSubmitted(true);
+            } else {
+                const data = await res.json();
+                setError(data.error || "Failed to send message. Please try again.");
+            }
+        } catch {
+            setError("Failed to send message. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (submitted) {
         return (
-            <div className="bg-white p-8 rounded-2xl shadow-sm text-center border border-blush/20">
-                <h3 className="text-2xl font-display font-bold text-brand-dark mb-4">Thank you!</h3>
+            <div className="bg-white p-8 rounded-2xl shadow-sm text-center border border-green-200 bg-green-50">
+                <h3 className="text-2xl font-display font-bold text-brand-dark mb-4">Message Sent!</h3>
                 <p className="text-gray-600 mb-6">
-                    We've prepared an email drafting for you. If it didn't open, please click below.
+                    Thank you for reaching out. We'll get back to you within 24-48 hours.
                 </p>
-                <Button variant="outline" onClick={() => setSubmitted(false)}>
+                <Button variant="outline" onClick={() => {
+                    setSubmitted(false);
+                    setFormData({ name: "", email: "", phone: "", location: "Scarborough", message: "", newsletter: false });
+                }}>
                     Send Another Message
                 </Button>
             </div>
@@ -132,8 +151,14 @@ export function ContactForm() {
                 </label>
             </div>
 
-            <Button type="submit" className="w-full">
-                Send Message
+            {error && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                    {error}
+                </div>
+            )}
+
+            <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Sending..." : "Send Message"}
             </Button>
         </form>
     );
