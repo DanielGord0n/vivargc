@@ -24,12 +24,12 @@ export const siteContent: SiteContent = {
     },
     nav: [
         { label: "Home", href: "/" },
+        { label: "Events", href: "/billboard" },
         { label: "About", href: "/about" },
         { label: "Programs", href: "/programs" },
         { label: "Schedule", href: "/schedule" },
         { label: "Coaches", href: "/coaches" },
         { label: "Gallery", href: "/gallery" },
-        { label: "Events", href: "/billboard" },
         { label: "Registration", href: "/registration" },
         { label: "Contact", href: "/contact" },
     ],
