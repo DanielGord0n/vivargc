@@ -29,6 +29,7 @@ export const siteContent: SiteContent = {
         { label: "Schedule", href: "/schedule" },
         { label: "Coaches", href: "/coaches" },
         { label: "Gallery", href: "/gallery" },
+        { label: "Events", href: "/billboard" },
         { label: "Registration", href: "/registration" },
         { label: "Contact", href: "/contact" },
     ],
