@@ -24,6 +24,7 @@ export const siteContent: SiteContent = {
     },
     nav: [
         { label: "Home", href: "/" },
+        { label: "Events", href: "/billboard" },
         { label: "About", href: "/about" },
         { label: "Programs", href: "/programs" },
         { label: "Schedule", href: "/schedule" },

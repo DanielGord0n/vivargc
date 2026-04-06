@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Home, Users, Image, Calendar, BookOpen, LogOut, Undo2, Lock, FileText, Info } from "lucide-react";
+import { Home, Users, Image, Calendar, BookOpen, LogOut, Undo2, Lock, FileText, Info, Megaphone } from "lucide-react";
 
 const navItems = [
     { label: "Dashboard", href: "/admin", icon: Home },
@@ -14,6 +14,7 @@ const navItems = [
     { label: "Gallery", href: "/admin/gallery", icon: Image },
     { label: "Schedule", href: "/admin/schedule", icon: Calendar },
     { label: "Programs", href: "/admin/programs", icon: BookOpen },
+    { label: "Billboard", href: "/admin/billboard", icon: Megaphone },
 ];
 
 // Simple password - in production, use proper authentication
