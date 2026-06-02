@@ -17,9 +17,6 @@ const navItems = [
     { label: "Billboard", href: "/admin/billboard", icon: Megaphone },
 ];
 
-// Simple password - in production, use proper authentication
-const ADMIN_PASSWORD = "Daisy";
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -43,13 +40,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }
     };
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === ADMIN_PASSWORD) {
-            setIsAuthenticated(true);
-            setError("");
-        } else {
-            setError("Incorrect password");
+        try {
+            const res = await fetch("/api/admin/auth", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ password }),
+            });
+            
+            if (res.ok) {
+                setIsAuthenticated(true);
+                setError("");
+            } else {
+                setError("Incorrect password");
+            }
+        } catch (error) {
+            setError("Authentication failed");
         }
     };
 
