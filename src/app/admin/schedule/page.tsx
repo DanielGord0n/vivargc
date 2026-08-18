@@ -51,16 +51,25 @@ export default function ScheduleAdmin() {
             const data = await res.json();
             data.schedule = schedule;
 
-            await fetch("/api/admin/content", {
+            const saveRes = await fetch("/api/admin/content", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
 
+            if (!saveRes.ok) {
+                const err = await saveRes.json().catch(() => ({}));
+                throw new Error(err.error || `Save failed (${saveRes.status})`);
+            }
+
             alert("Schedule saved successfully!");
         } catch (error) {
             console.error("Failed to save:", error);
-            alert("Failed to save. Please try again.");
+            alert(
+                error instanceof Error
+                    ? `Failed to save: ${error.message}`
+                    : "Failed to save. Please try again."
+            );
         } finally {
             setSaving(false);
         }

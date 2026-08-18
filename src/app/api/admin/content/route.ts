@@ -39,30 +39,35 @@ export async function GET() {
 }
 
 // Save all content
+//
+// Rows are upserted BEFORE stale rows are deleted. The previous version deleted
+// everything first and then inserted without checking for errors, so any failed
+// insert (a bad column, a size limit, a network blip) silently emptied the table
+// while the admin UI still reported success.
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
 
-        // Update coaches - delete all and insert new
-        if (body.coaches) {
-            await supabase.from('coaches').delete().neq('id', '');
-            if (body.coaches.length > 0) {
-                await supabase.from('coaches').insert(body.coaches);
+        // Coaches / gallery / programs are keyed by a stable text id.
+        for (const table of ['coaches', 'gallery', 'programs'] as const) {
+            const rows = body[table];
+            if (!rows) continue;
+
+            if (rows.length > 0) {
+                const { error } = await supabase.from(table).upsert(rows);
+                if (error) throw new Error(`${table}: ${error.message}`);
             }
+
+            const keptIds = rows.map((row: { id: string }) => row.id);
+            const remove = supabase.from(table).delete();
+            const { error: deleteError } = keptIds.length > 0
+                ? await remove.not('id', 'in', `(${keptIds.map((id: string) => `"${id}"`).join(',')})`)
+                : await remove.neq('id', '');
+            if (deleteError) throw new Error(`${table} cleanup: ${deleteError.message}`);
         }
 
-        // Update gallery
-        if (body.gallery) {
-            await supabase.from('gallery').delete().neq('id', '');
-            if (body.gallery.length > 0) {
-                await supabase.from('gallery').insert(body.gallery);
-            }
-        }
-
-        // Update schedule
+        // Schedule rows have no stable key, so they are replaced wholesale.
         if (body.schedule) {
-            await supabase.from('schedule').delete().neq('id', 0);
-
             const scheduleItems: { location: string; day: string; time: string; group_name: string }[] = [];
 
             Object.entries(body.schedule).forEach(([location, days]) => {
@@ -78,22 +83,21 @@ export async function POST(request: NextRequest) {
                 });
             });
 
-            if (scheduleItems.length > 0) {
-                await supabase.from('schedule').insert(scheduleItems);
-            }
-        }
+            const { error: deleteError } = await supabase.from('schedule').delete().neq('id', 0);
+            if (deleteError) throw new Error(`schedule cleanup: ${deleteError.message}`);
 
-        // Update programs
-        if (body.programs) {
-            await supabase.from('programs').delete().neq('id', '');
-            if (body.programs.length > 0) {
-                await supabase.from('programs').insert(body.programs);
+            if (scheduleItems.length > 0) {
+                const { error } = await supabase.from('schedule').insert(scheduleItems);
+                if (error) throw new Error(`schedule: ${error.message}`);
             }
         }
 
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error('Error saving content:', error);
-        return NextResponse.json({ error: 'Failed to save content' }, { status: 500 });
+        return NextResponse.json(
+            { error: error instanceof Error ? error.message : 'Failed to save content' },
+            { status: 500 }
+        );
     }
 }

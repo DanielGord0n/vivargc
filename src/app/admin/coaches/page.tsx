@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Plus, Trash2, Save, Upload, X } from "lucide-react";
+import { uploadFile } from "@/lib/uploadFile";
 
 interface Coach {
     id: string;
@@ -56,17 +57,26 @@ export default function CoachesAdmin() {
             const data = await res.json();
             data.coaches = updatedCoaches;
 
-            await fetch("/api/admin/content", {
+            const saveRes = await fetch("/api/admin/content", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
 
+            if (!saveRes.ok) {
+                const err = await saveRes.json().catch(() => ({}));
+                throw new Error(err.error || `Save failed (${saveRes.status})`);
+            }
+
             setCoaches(updatedCoaches);
             alert("Coaches saved successfully!");
         } catch (error) {
             console.error("Failed to save:", error);
-            alert("Failed to save. Please try again.");
+            alert(
+                error instanceof Error
+                    ? `Failed to save: ${error.message}`
+                    : "Failed to save. Please try again."
+            );
         } finally {
             setSaving(false);
         }
@@ -125,15 +135,8 @@ export default function CoachesAdmin() {
         if (!files || files.length === 0 || !editingCoach) return;
 
         for (const file of Array.from(files)) {
-            const formData = new FormData();
-            formData.append("file", file);
-
             try {
-                const res = await fetch("/api/admin/upload", {
-                    method: "POST",
-                    body: formData,
-                });
-                const data = await res.json();
+                const data = await uploadFile(file);
 
                 if (data.path) {
                     setEditingCoach(prev => {

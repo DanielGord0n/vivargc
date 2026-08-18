@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Upload, X, FileText, Image as ImageIcon, Plus, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
+import { uploadFile } from "@/lib/uploadFile";
 
 interface BillboardEvent {
     id: string;
@@ -65,7 +66,7 @@ export default function AdminBillboardPage() {
                 body: JSON.stringify({ content: { events } }),
             });
             if (!res.ok) throw new Error("Save failed");
-            alert("Billboard saved!");
+            alert("Events saved!");
         } catch {
             alert("Failed to save. Please try again.");
         } finally {
@@ -101,7 +102,7 @@ export default function AdminBillboardPage() {
         <div className="max-w-2xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Billboard / Events</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Events</h1>
                     <p className="text-gray-500 mt-1 text-sm">Add, edit, or remove events shown on the public Events page.</p>
                 </div>
                 <button
@@ -179,14 +180,11 @@ function EventEditor({
         if (!file) return;
         setUploadingFlyer(true);
         try {
-            const formData = new FormData();
-            formData.append("file", file);
-            const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error);
-            onChange({ flyerImage: data.path });
-        } catch {
-            alert("Failed to upload image.");
+            const { path } = await uploadFile(file);
+            onChange({ flyerImage: path });
+        } catch (error) {
+            console.error("Upload failed:", error);
+            alert(error instanceof Error ? error.message : "Failed to upload image.");
         } finally {
             setUploadingFlyer(false);
             if (flyerRef.current) flyerRef.current.value = "";
@@ -198,14 +196,11 @@ function EventEditor({
         if (!file) return;
         setUploadingPdf(true);
         try {
-            const formData = new FormData();
-            formData.append("file", file);
-            const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error);
-            onChange({ registrationFile: data.path, registrationFileName: file.name });
-        } catch {
-            alert("Failed to upload file.");
+            const { path } = await uploadFile(file);
+            onChange({ registrationFile: path, registrationFileName: file.name });
+        } catch (error) {
+            console.error("Upload failed:", error);
+            alert(error instanceof Error ? error.message : "Failed to upload file.");
         } finally {
             setUploadingPdf(false);
             if (pdfRef.current) pdfRef.current.value = "";

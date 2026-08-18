@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Trash2, Upload, X, Play, Expand, ChevronLeft, ChevronRight, Pin, PinOff } from "lucide-react";
+import { uploadFile } from "@/lib/uploadFile";
 
 interface GalleryItem {
     id: string;
@@ -58,17 +59,26 @@ export default function GalleryAdmin() {
             const data = await res.json();
             data.gallery = updatedGallery;
 
-            await fetch("/api/admin/content", {
+            const saveRes = await fetch("/api/admin/content", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
 
+            if (!saveRes.ok) {
+                const err = await saveRes.json().catch(() => ({}));
+                throw new Error(err.error || `Save failed (${saveRes.status})`);
+            }
+
             setGallery(updatedGallery);
             if (showAlert) alert("Gallery saved successfully!");
         } catch (error) {
             console.error("Failed to save:", error);
-            alert("Failed to save. Please try again.");
+            alert(
+                error instanceof Error
+                    ? `Failed to save: ${error.message}`
+                    : "Failed to save. Please try again."
+            );
         } finally {
             setSaving(false);
         }
@@ -103,38 +113,39 @@ export default function GalleryAdmin() {
 
         setUploading(true);
 
-        try {
-            const newItems: GalleryItem[] = [];
+        const newItems: GalleryItem[] = [];
+        const failures: string[] = [];
 
-            for (const file of Array.from(files)) {
-                const formData = new FormData();
-                formData.append("file", file);
-
-                const res = await fetch("/api/admin/upload", {
-                    method: "POST",
-                    body: formData,
+        for (const file of Array.from(files)) {
+            try {
+                const { path } = await uploadFile(file);
+                const isVideo = file.type.startsWith("video/");
+                newItems.push({
+                    id: `gallery-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
+                    src: path,
+                    category: isVideo ? "Video" : "Performance",
+                    alt: file.name.replace(/\.[^/.]+$/, ""),
+                    pinned: false,
                 });
-                const data = await res.json();
-
-                if (data.path) {
-                    const isVideo = file.type.startsWith("video/");
-                    newItems.push({
-                        id: `gallery-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                        src: data.path,
-                        category: isVideo ? "Video" : "Performance",
-                        alt: file.name.replace(/\.[^/.]+$/, ""),
-                        pinned: false,
-                    });
-                }
+            } catch (error) {
+                console.error("Upload failed:", error);
+                failures.push(error instanceof Error ? error.message : `Could not upload "${file.name}".`);
             }
+        }
 
-            const updated = [...newItems, ...gallery];
-            await saveGallery(updated);
-        } catch (error) {
-            console.error("Upload failed:", error);
-            alert("Failed to upload. Please try again.");
+        try {
+            if (newItems.length > 0) {
+                await saveGallery([...newItems, ...gallery], failures.length === 0);
+            }
         } finally {
             setUploading(false);
+            e.target.value = "";
+        }
+
+        if (failures.length > 0) {
+            alert(
+                `${newItems.length} file(s) uploaded.\n\nFailed:\n${failures.join("\n")}`
+            );
         }
     };
 

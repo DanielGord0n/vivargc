@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Users, Image, Calendar, BookOpen, ArrowRight, Home, Info } from "lucide-react";
+import { Users, Image, Calendar, BookOpen, ArrowRight, Home, Info, Megaphone } from "lucide-react";
 
 const sections = [
     {
@@ -10,6 +10,13 @@ const sections = [
         href: "/admin/home",
         icon: Home,
         color: "bg-brand",
+    },
+    {
+        title: "Events",
+        description: "Add, edit, or remove events and flyers",
+        href: "/admin/billboard",
+        icon: Megaphone,
+        color: "bg-rose-500",
     },
     {
         title: "About Page",

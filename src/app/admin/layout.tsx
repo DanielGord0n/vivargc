@@ -9,12 +9,12 @@ import { Home, Users, Image, Calendar, BookOpen, LogOut, Undo2, Lock, FileText, 
 const navItems = [
     { label: "Dashboard", href: "/admin", icon: Home },
     { label: "Home Page", href: "/admin/home", icon: FileText },
+    { label: "Events", href: "/admin/billboard", icon: Megaphone },
     { label: "About Page", href: "/admin/about", icon: Info },
     { label: "Coaches", href: "/admin/coaches", icon: Users },
     { label: "Gallery", href: "/admin/gallery", icon: Image },
     { label: "Schedule", href: "/admin/schedule", icon: Calendar },
     { label: "Programs", href: "/admin/programs", icon: BookOpen },
-    { label: "Billboard", href: "/admin/billboard", icon: Megaphone },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

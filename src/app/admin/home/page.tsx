@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Save, Plus, Trash2, Upload } from "lucide-react";
+import { uploadFile } from "@/lib/uploadFile";
 
 interface HomeContent {
     hero: {
@@ -104,14 +105,7 @@ export default function HomeAdmin() {
         setUploading(typeof field === "number" ? `gallery-${field}` : field);
 
         try {
-            const formData = new FormData();
-            formData.append("file", file);
-
-            const res = await fetch("/api/admin/upload", {
-                method: "POST",
-                body: formData,
-            });
-            const data = await res.json();
+            const data = await uploadFile(file);
 
             if (data.path) {
                 if (field === "heroImage") {
