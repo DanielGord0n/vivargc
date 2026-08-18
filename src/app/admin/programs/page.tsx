@@ -3,6 +3,15 @@
 import { useState, useEffect } from "react";
 import { Plus, Trash2, Save, X, GripVertical } from "lucide-react";
 
+async function createBackup() {
+    try {
+        await fetch("/api/admin/backup", { method: "POST" });
+    } catch (error) {
+        console.error("Failed to create backup:", error);
+    }
+}
+
+
 interface Program {
     id: string;
     title: string;
@@ -40,6 +49,8 @@ export default function ProgramsAdmin() {
             const res = await fetch("/api/admin/content");
             const data = await res.json();
             data.programs = updatedPrograms;
+
+            await createBackup();
 
             const saveRes = await fetch("/api/admin/content", {
                 method: "POST",

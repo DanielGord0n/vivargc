@@ -145,7 +145,7 @@ function SingleEventFeatured({
                     </div>
                     <h2 className="font-display text-4xl font-bold text-brand-dark mb-4">{event.title}</h2>
                     {event.description && (
-                        <p className="text-gray-600 text-lg leading-relaxed mb-8">{event.description}</p>
+                        <p className="text-gray-600 text-lg leading-relaxed mb-8 whitespace-pre-line">{event.description}</p>
                     )}
                     {event.registrationFile && (
                         <div className="space-y-3">
@@ -207,7 +207,7 @@ function EventCard({
                 </div>
                 <h3 className="font-display text-2xl font-bold text-brand-dark mb-3">{event.title}</h3>
                 {event.description && (
-                    <p className="text-gray-500 text-sm leading-relaxed mb-6 flex-1">{event.description}</p>
+                    <p className="text-gray-500 text-sm leading-relaxed mb-6 flex-1 whitespace-pre-line">{event.description}</p>
                 )}
                 {event.registrationFile && (
                     <a

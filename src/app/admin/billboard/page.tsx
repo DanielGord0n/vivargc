@@ -5,6 +5,15 @@ import Image from "next/image";
 import { Upload, X, FileText, Image as ImageIcon, Plus, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { uploadFile } from "@/lib/uploadFile";
 
+async function createBackup() {
+    try {
+        await fetch("/api/admin/backup", { method: "POST" });
+    } catch (error) {
+        console.error("Failed to create backup:", error);
+    }
+}
+
+
 interface BillboardEvent {
     id: string;
     title: string;
@@ -60,6 +69,8 @@ export default function AdminBillboardPage() {
     const handleSave = async () => {
         setSaving(true);
         try {
+            await createBackup();
+
             const res = await fetch("/api/admin/pages/billboard", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

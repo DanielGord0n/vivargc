@@ -5,6 +5,15 @@ import Image from "next/image";
 import { Save, Plus, Trash2, Upload } from "lucide-react";
 import { uploadFile } from "@/lib/uploadFile";
 
+async function createBackup() {
+    try {
+        await fetch("/api/admin/backup", { method: "POST" });
+    } catch (error) {
+        console.error("Failed to create backup:", error);
+    }
+}
+
+
 interface HomeContent {
     hero: {
         headline: string;
@@ -80,6 +89,8 @@ export default function HomeAdmin() {
     const saveContent = async () => {
         setSaving(true);
         try {
+            await createBackup();
+
             const res = await fetch("/api/admin/pages/home", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

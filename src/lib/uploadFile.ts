@@ -22,28 +22,15 @@ export function formatSize(bytes: number) {
     return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
-function storageFilename(originalName: string) {
-    const dot = originalName.lastIndexOf(".");
-    const ext =
-        dot > -1 ? originalName.slice(dot + 1).toLowerCase().replace(/[^a-z0-9]/g, "") : "bin";
-    return `upload_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
-}
-
-const canUploadDirectly = () =>
-    Boolean(
-        process.env.NEXT_PUBLIC_SUPABASE_URL &&
-        process.env.NEXT_PUBLIC_SUPABASE_URL !== "your_supabase_url_here" &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    );
-
 /**
  * Uploads a file to Supabase Storage straight from the browser.
  *
- * Going through /api/admin/upload puts the whole file in the request body of a
- * serverless function, and Vercel rejects those over 4.5 MB with a 413 before
- * the handler ever runs - which is why video uploads failed in production.
- * Uploading browser -> Supabase skips that hop entirely. The API route is kept
- * as a fallback for when the public Supabase env vars aren't available.
+ * Posting the file to /api/admin/upload put the whole thing in the request body
+ * of a serverless function, and Vercel rejects those over 4.5 MB with a 413
+ * before the handler runs - which is why video uploads failed in production but
+ * worked locally. Instead the API route now issues a one-time signed upload
+ * URL (a small JSON round trip) and the bytes go browser -> Supabase directly,
+ * with no size ceiling other than Supabase's own.
  *
  * Throws with a readable message on failure; callers should surface it.
  */
@@ -56,42 +43,37 @@ export async function uploadFile(file: File): Promise<UploadResult> {
         );
     }
 
-    const filename = storageFilename(file.name);
+    const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            filename: file.name,
+            size: file.size,
+            contentType: file.type,
+        }),
+    });
 
-    if (canUploadDirectly()) {
-        const { error } = await supabase.storage.from(BUCKET).upload(filename, file, {
-            cacheControl: "3600",
-            upsert: false,
-            contentType: file.type || undefined,
-        });
-
-        if (error) {
-            throw new Error(`Could not upload "${file.name}": ${error.message}`);
-        }
-
-        const { data } = supabase.storage.from(BUCKET).getPublicUrl(filename);
-        return { path: data.publicUrl, filename };
+    if (res.status === 401) {
+        throw new Error("Your admin session has expired. Please log in again.");
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
+    const data = await res.json().catch(() => ({}));
 
-    const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
-
-    if (res.status === 413) {
+    if (!res.ok || !data.token) {
         throw new Error(
-            `"${file.name}" (${formatSize(file.size)}) was rejected as too large by the server.`
+            `Could not upload "${file.name}": ${data.error || `server returned ${res.status}`}`
         );
     }
 
-    if (!res.ok) {
-        throw new Error(`Could not upload "${file.name}" (server returned ${res.status}).`);
+    const { error } = await supabase.storage
+        .from(BUCKET)
+        .uploadToSignedUrl(data.path, data.token, file, {
+            contentType: file.type || undefined,
+        });
+
+    if (error) {
+        throw new Error(`Could not upload "${file.name}": ${error.message}`);
     }
 
-    const data = await res.json();
-    if (!data.path) {
-        throw new Error(`Could not upload "${file.name}": ${data.error || "no URL returned"}`);
-    }
-
-    return { path: data.path, filename: data.filename ?? filename };
+    return { path: data.publicUrl, filename: data.path };
 }

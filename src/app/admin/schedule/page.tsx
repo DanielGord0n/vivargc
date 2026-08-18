@@ -3,6 +3,15 @@
 import { useState, useEffect } from "react";
 import { Plus, Trash2, Save, X } from "lucide-react";
 
+async function createBackup() {
+    try {
+        await fetch("/api/admin/backup", { method: "POST" });
+    } catch (error) {
+        console.error("Failed to create backup:", error);
+    }
+}
+
+
 interface ScheduleItem {
     time: string;
     group: string;
@@ -50,6 +59,8 @@ export default function ScheduleAdmin() {
             const res = await fetch("/api/admin/content");
             const data = await res.json();
             data.schedule = schedule;
+
+            await createBackup();
 
             const saveRes = await fetch("/api/admin/content", {
                 method: "POST",

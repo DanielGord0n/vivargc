@@ -3,6 +3,15 @@
 import { useState, useEffect } from "react";
 import { Save, Plus, Trash2 } from "lucide-react";
 
+async function createBackup() {
+    try {
+        await fetch("/api/admin/backup", { method: "POST" });
+    } catch (error) {
+        console.error("Failed to create backup:", error);
+    }
+}
+
+
 interface AboutContent {
     header: {
         title: string;
@@ -74,6 +83,8 @@ export default function AboutAdmin() {
     const saveContent = async () => {
         setSaving(true);
         try {
+            await createBackup();
+
             const res = await fetch("/api/admin/pages/about", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
