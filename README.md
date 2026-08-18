@@ -42,8 +42,33 @@ cp .env.local.example .env.local
 Populate the following variables in `.env.local` with your respective credentials:
 - `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase anonymous public key
+- `SUPABASE_SERVICE_ROLE_KEY`: Supabase service role key, server-side only
 - `RESEND_API_KEY`: Resend API key for email services
 - `ADMIN_PASSWORD`: Secure string required for accessing the admin CMS
+
+### Database Setup
+
+Run these in the Supabase SQL Editor, in order:
+
+1. `supabase-schema.sql` - content tables and the images storage bucket
+2. `supabase-page-content.sql` - editable copy for the home and about pages
+3. `supabase-security.sql` - reduces the anon key to read-only and adds the
+   snapshot table behind the admin's "Undo last save"
+
+Step 3 requires `SUPABASE_SERVICE_ROLE_KEY` to be set first, in `.env.local` and
+in the Vercel project. Once it is applied, the public anon key can only read;
+every write goes through the authenticated admin API routes.
+
+## Security Model
+
+- The `/admin` login checks `ADMIN_PASSWORD` and issues a signed, httpOnly
+  session cookie valid for 8 hours. Middleware enforces it on every
+  `/api/admin/*` request, so the API is not reachable without logging in.
+- Writes to Supabase happen server-side with the service role key. The anon key
+  in the browser bundle is read-only after `supabase-security.sql`.
+- Media uploads use one-time signed upload URLs: the API route issues the token,
+  the browser sends the file straight to Supabase. This keeps large files off the
+  serverless request path, which Vercel caps at 4.5 MB.
 
 ### Running the Server
 
