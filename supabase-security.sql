@@ -40,6 +40,13 @@ DROP POLICY IF EXISTS "Allow all operations on schedule" ON schedule;
 DROP POLICY IF EXISTS "Allow all operations on programs" ON programs;
 DROP POLICY IF EXISTS "Allow all operations on page_content" ON page_content;
 
+-- Dropped first as well, so this file can be run again safely.
+DROP POLICY IF EXISTS "Public read access" ON coaches;
+DROP POLICY IF EXISTS "Public read access" ON gallery;
+DROP POLICY IF EXISTS "Public read access" ON schedule;
+DROP POLICY IF EXISTS "Public read access" ON programs;
+DROP POLICY IF EXISTS "Public read access" ON page_content;
+
 CREATE POLICY "Public read access" ON coaches      FOR SELECT USING (true);
 CREATE POLICY "Public read access" ON gallery      FOR SELECT USING (true);
 CREATE POLICY "Public read access" ON schedule     FOR SELECT USING (true);
@@ -63,5 +70,20 @@ DROP POLICY IF EXISTS "Allow public read access"    ON storage.objects;
 DROP POLICY IF EXISTS "Allow authenticated uploads" ON storage.objects;
 DROP POLICY IF EXISTS "Allow authenticated deletes" ON storage.objects;
 
+DROP POLICY IF EXISTS "Public read access to images" ON storage.objects;
+
 CREATE POLICY "Public read access to images"
     ON storage.objects FOR SELECT USING (bucket_id = 'images');
+
+-- ---------------------------------------------------------------------------
+-- 4. Show what is left, so the result is visible rather than assumed
+-- ---------------------------------------------------------------------------
+-- Every row below should be a SELECT-only policy. Any INSERT/UPDATE/DELETE/ALL
+-- row still listed means something is writable by the public anon key.
+
+SELECT schemaname, tablename, policyname, cmd, roles
+FROM pg_policies
+WHERE (schemaname = 'public'
+       AND tablename IN ('coaches','gallery','schedule','programs','page_content','content_backups'))
+   OR (schemaname = 'storage' AND tablename = 'objects')
+ORDER BY schemaname, tablename, policyname;
