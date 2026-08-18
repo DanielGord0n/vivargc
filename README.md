@@ -70,6 +70,20 @@ every write goes through the authenticated admin API routes.
   the browser sends the file straight to Supabase. This keeps large files off the
   serverless request path, which Vercel caps at 4.5 MB.
 
+To confirm the lockdown is actually in force, run:
+
+```bash
+npm run verify:security
+```
+
+It checks that the public anon key can still read every table the site needs and
+can no longer write to any of them, that the snapshot table is server-only, that
+uploaded files stay publicly readable while direct anon uploads are refused, and
+that the service role can still write. The checks are non-destructive: write
+permission is probed by inserting a uniquely named throwaway row, which is
+removed again if it lands. Expect failures in sections 2 and 4 until
+`supabase-security.sql` has been applied.
+
 ### Running the Server
 
 Start the local development server:
