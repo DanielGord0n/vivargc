@@ -1,17 +1,24 @@
 -- Viva RGC - lock down write access and add content snapshots
--- Run this once in the Supabase SQL Editor.
+-- Run this once in the Supabase SQL Editor, or via the Supabase MCP.
 --
 -- WHY
--- Every table and the images bucket currently allow ALL operations to anyone,
+-- Every table and the images bucket allowed ALL operations to anyone,
 -- including the anon key. That key ships inside the public JavaScript bundle,
--- so anyone who opens devtools can edit or delete site content without ever
+-- so anyone who opened devtools could edit or delete site content without ever
 -- seeing the admin login. This migration reduces the anon key to read-only.
 -- Writes then happen only through the admin API routes, which authenticate the
 -- session cookie and use the service-role key.
 --
 -- BEFORE RUNNING: set SUPABASE_SERVICE_ROLE_KEY in .env.local and in the Vercel
--- project's environment variables. Without it the admin can no longer save.
--- Find it at: Supabase Dashboard -> Project Settings -> API -> service_role.
+-- project's environment variables, and deploy. Without it the admin cannot save.
+-- Find it at: Supabase Dashboard -> Project Settings -> API -> Secret keys.
+--
+-- Policies are dropped by discovery rather than by name. An earlier version of
+-- this file named each policy explicitly and would have silently left
+-- page_content writable, because its policy was called "Allow all" rather than
+-- the "Allow all operations on page_content" the file assumed. DROP POLICY IF
+-- EXISTS on a wrong name fails silently, so this now enumerates whatever is
+-- actually there.
 
 -- ---------------------------------------------------------------------------
 -- 1. Content snapshots, so the admin's "Undo last save" has something to restore
@@ -34,18 +41,24 @@ ALTER TABLE content_backups ENABLE ROW LEVEL SECURITY;
 -- 2. Reduce the anon key to read-only on the content tables
 -- ---------------------------------------------------------------------------
 
-DROP POLICY IF EXISTS "Allow all operations on coaches" ON coaches;
-DROP POLICY IF EXISTS "Allow all operations on gallery" ON gallery;
-DROP POLICY IF EXISTS "Allow all operations on schedule" ON schedule;
-DROP POLICY IF EXISTS "Allow all operations on programs" ON programs;
-DROP POLICY IF EXISTS "Allow all operations on page_content" ON page_content;
-
--- Dropped first as well, so this file can be run again safely.
-DROP POLICY IF EXISTS "Public read access" ON coaches;
-DROP POLICY IF EXISTS "Public read access" ON gallery;
-DROP POLICY IF EXISTS "Public read access" ON schedule;
-DROP POLICY IF EXISTS "Public read access" ON programs;
-DROP POLICY IF EXISTS "Public read access" ON page_content;
+DO $$
+DECLARE
+    policy_row RECORD;
+BEGIN
+    FOR policy_row IN
+        SELECT policyname, tablename
+        FROM pg_policies
+        WHERE schemaname = 'public'
+          AND tablename IN ('coaches', 'gallery', 'schedule', 'programs', 'page_content')
+    LOOP
+        EXECUTE format(
+            'DROP POLICY %I ON public.%I',
+            policy_row.policyname,
+            policy_row.tablename
+        );
+        RAISE NOTICE 'Dropped policy % on %', policy_row.policyname, policy_row.tablename;
+    END LOOP;
+END $$;
 
 CREATE POLICY "Public read access" ON coaches      FOR SELECT USING (true);
 CREATE POLICY "Public read access" ON gallery      FOR SELECT USING (true);
@@ -65,25 +78,26 @@ ALTER TABLE page_content ENABLE ROW LEVEL SECURITY;
 -- Admin uploads still work: the API route mints a one-time signed upload URL
 -- with the service-role key, and the signed token authorises that single write
 -- without needing an INSERT policy.
+--
+-- Only policies that mention the images bucket are touched, so any other
+-- bucket's policies are left alone.
 
-DROP POLICY IF EXISTS "Allow public read access"    ON storage.objects;
-DROP POLICY IF EXISTS "Allow authenticated uploads" ON storage.objects;
-DROP POLICY IF EXISTS "Allow authenticated deletes" ON storage.objects;
-
-DROP POLICY IF EXISTS "Public read access to images" ON storage.objects;
+DO $$
+DECLARE
+    policy_row RECORD;
+BEGIN
+    FOR policy_row IN
+        SELECT policyname
+        FROM pg_policies
+        WHERE schemaname = 'storage'
+          AND tablename = 'objects'
+          AND (COALESCE(qual::text, '') LIKE '%images%'
+               OR COALESCE(with_check::text, '') LIKE '%images%')
+    LOOP
+        EXECUTE format('DROP POLICY %I ON storage.objects', policy_row.policyname);
+        RAISE NOTICE 'Dropped storage policy %', policy_row.policyname;
+    END LOOP;
+END $$;
 
 CREATE POLICY "Public read access to images"
     ON storage.objects FOR SELECT USING (bucket_id = 'images');
-
--- ---------------------------------------------------------------------------
--- 4. Show what is left, so the result is visible rather than assumed
--- ---------------------------------------------------------------------------
--- Every row below should be a SELECT-only policy. Any INSERT/UPDATE/DELETE/ALL
--- row still listed means something is writable by the public anon key.
-
-SELECT schemaname, tablename, policyname, cmd, roles
-FROM pg_policies
-WHERE (schemaname = 'public'
-       AND tablename IN ('coaches','gallery','schedule','programs','page_content','content_backups'))
-   OR (schemaname = 'storage' AND tablename = 'objects')
-ORDER BY schemaname, tablename, policyname;
