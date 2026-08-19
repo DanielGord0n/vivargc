@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Users, Image, Calendar, BookOpen, ArrowRight, Home, Info } from "lucide-react";
+import { Users, Image, Calendar, BookOpen, ArrowRight, Home, Info, Megaphone } from "lucide-react";
 
 const sections = [
     {
@@ -10,6 +10,13 @@ const sections = [
         href: "/admin/home",
         icon: Home,
         color: "bg-brand",
+    },
+    {
+        title: "Events",
+        description: "Add, edit, or remove events and flyers",
+        href: "/admin/billboard",
+        icon: Megaphone,
+        color: "bg-rose-500",
     },
     {
         title: "About Page",
@@ -85,7 +92,7 @@ export default function AdminDashboard() {
             <div className="mt-8 p-6 bg-brand/5 rounded-xl border border-brand/10">
                 <h3 className="font-semibold text-gray-900">Quick Tips</h3>
                 <ul className="mt-2 text-sm text-gray-600 space-y-1">
-                    <li>• Changes are saved automatically when you click "Save"</li>
+                    <li>• Changes are saved automatically when you click &quot;Save&quot;</li>
                     <li>• Upload images directly by clicking the upload button</li>
                     <li>• Preview changes on the live site after saving</li>
                 </ul>

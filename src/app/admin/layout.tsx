@@ -9,32 +9,43 @@ import { Home, Users, Image, Calendar, BookOpen, LogOut, Undo2, Lock, FileText, 
 const navItems = [
     { label: "Dashboard", href: "/admin", icon: Home },
     { label: "Home Page", href: "/admin/home", icon: FileText },
+    { label: "Events", href: "/admin/billboard", icon: Megaphone },
     { label: "About Page", href: "/admin/about", icon: Info },
     { label: "Coaches", href: "/admin/coaches", icon: Users },
     { label: "Gallery", href: "/admin/gallery", icon: Image },
     { label: "Schedule", href: "/admin/schedule", icon: Calendar },
     { label: "Programs", href: "/admin/programs", icon: BookOpen },
-    { label: "Billboard", href: "/admin/billboard", icon: Megaphone },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [checkingSession, setCheckingSession] = useState(true);
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [hasBackup, setHasBackup] = useState(false);
     const [restoring, setRestoring] = useState(false);
 
+    // The session lives in an httpOnly cookie now, so a refresh or a full page
+    // navigation no longer means logging in again.
     useEffect(() => {
-        // Check backup status on mount
-        checkBackupStatus();
+        fetch("/api/admin/auth")
+            .then((res) => res.json())
+            .then((data) => setIsAuthenticated(Boolean(data.authenticated)))
+            .catch(() => setIsAuthenticated(false))
+            .finally(() => setCheckingSession(false));
     }, []);
+
+    useEffect(() => {
+        if (isAuthenticated) checkBackupStatus();
+    }, [isAuthenticated]);
 
     const checkBackupStatus = async () => {
         try {
             const res = await fetch("/api/admin/backup");
+            if (!res.ok) return;
             const data = await res.json();
-            setHasBackup(data.hasBackup);
+            setHasBackup(Boolean(data.hasBackup));
         } catch (error) {
             console.error("Failed to check backup status:", error);
         }
@@ -50,19 +61,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 },
                 body: JSON.stringify({ password }),
             });
-            
+
             if (res.ok) {
                 setIsAuthenticated(true);
+                setPassword("");
                 setError("");
             } else {
                 setError("Incorrect password");
             }
-        } catch (error) {
+        } catch {
             setError("Authentication failed");
         }
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        try {
+            await fetch("/api/admin/auth", { method: "DELETE" });
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
         setIsAuthenticated(false);
     };
 
@@ -83,7 +100,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 alert("Changes undone! Refreshing page...");
                 window.location.reload();
             } else {
-                alert("Failed to undo changes.");
+                const data = await res.json().catch(() => ({}));
+                alert(`Failed to undo changes: ${data.error || res.status}`);
             }
         } catch (error) {
             console.error("Undo failed:", error);
@@ -92,6 +110,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             setRestoring(false);
         }
     };
+
+    if (checkingSession) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand" />
+            </div>
+        );
+    }
 
     // Login Screen
     if (!isAuthenticated) {
@@ -172,6 +198,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </nav>
 
                 <div className="p-4 space-y-2 border-t border-gray-200">
+                    {hasBackup && (
+                        <button
+                            onClick={handleUndo}
+                            disabled={restoring}
+                            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors w-full disabled:opacity-50"
+                            title="Restore the content as it was before the last save"
+                        >
+                            <Undo2 className="w-5 h-5" />
+                            {restoring ? "Restoring..." : "Undo last save"}
+                        </button>
+                    )}
+
                     {/* Logout / Back to Site */}
                     <button
                         onClick={handleLogout}

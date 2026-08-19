@@ -3,6 +3,15 @@
 import { useState, useEffect } from "react";
 import { Plus, Trash2, Save, X, GripVertical } from "lucide-react";
 
+async function createBackup() {
+    try {
+        await fetch("/api/admin/backup", { method: "POST" });
+    } catch (error) {
+        console.error("Failed to create backup:", error);
+    }
+}
+
+
 interface Program {
     id: string;
     title: string;
@@ -41,17 +50,28 @@ export default function ProgramsAdmin() {
             const data = await res.json();
             data.programs = updatedPrograms;
 
-            await fetch("/api/admin/content", {
+            await createBackup();
+
+            const saveRes = await fetch("/api/admin/content", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
 
+            if (!saveRes.ok) {
+                const err = await saveRes.json().catch(() => ({}));
+                throw new Error(err.error || `Save failed (${saveRes.status})`);
+            }
+
             setPrograms(updatedPrograms);
             alert("Programs saved successfully!");
         } catch (error) {
             console.error("Failed to save:", error);
-            alert("Failed to save. Please try again.");
+            alert(
+                error instanceof Error
+                    ? `Failed to save: ${error.message}`
+                    : "Failed to save. Please try again."
+            );
         } finally {
             setSaving(false);
         }

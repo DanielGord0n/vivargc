@@ -24,7 +24,7 @@ export default function ContactPage() {
                         {siteContent.contact.title}
                     </h1>
                     <p className="text-white/90 max-w-2xl mx-auto text-xl leading-relaxed font-light">
-                        We'd love to hear from you. Contact us for trial classes, assessments, and general inquiries.
+                        We&apos;d love to hear from you. Contact us for trial classes, assessments, and general inquiries.
                     </p>
                 </Container>
             </div>

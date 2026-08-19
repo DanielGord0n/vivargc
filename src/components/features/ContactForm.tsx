@@ -47,7 +47,7 @@ export function ContactForm() {
             <div className="bg-white p-8 rounded-2xl shadow-sm text-center border border-green-200 bg-green-50">
                 <h3 className="text-2xl font-display font-bold text-brand-dark mb-4">Message Sent!</h3>
                 <p className="text-gray-600 mb-6">
-                    Thank you for reaching out. We'll get back to you within 24-48 hours.
+                    Thank you for reaching out. We&apos;ll get back to you within 24-48 hours.
                 </p>
                 <Button variant="outline" onClick={() => {
                     setSubmitted(false);
@@ -65,7 +65,7 @@ export function ContactForm() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Parent's Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Parent&apos;s Name</label>
                     <input
                         required
                         type="text"
