@@ -60,7 +60,7 @@ export const siteContent: SiteContent = {
         {
             title: "Recreational",
             slug: "recreational",
-            ages: "Ages 3+",
+            ages: "Ages 5+",
             description: "Fun, engaging classes that introduce the fundamentals of rhythmic gymnastics with ribbons, hoops, and balls.",
         },
         {

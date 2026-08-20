@@ -38,7 +38,7 @@ export default async function ProgramsPage() {
 
                 <div className="space-y-12">
                     {[
-                        { title: "Recreational", desc: "Building fundamentals, coordination, and love for the sport.", age: "Ages 3+" },
+                        { title: "Recreational", desc: "Building fundamentals, coordination, and love for the sport.", age: "Ages 5+" },
                         { title: "Pre-Competitive", desc: "Advanced basics and introduction to routines.", age: "Selected by Coach" },
                         { title: "Interclub", desc: "First step into competition with focus on fun and performance.", age: "By Audition" },
                         { title: "Provincial / National", desc: "High-performance training for serious athletes.", age: "By Audition" }
