@@ -270,3 +270,80 @@ export async function getAboutPageContentAsync(): Promise<AboutPageContent | nul
     }
 }
 
+// Programs page - the "Athlete Pathway" timeline
+export interface PathwayStep {
+    title: string;
+    age: string;
+    desc: string;
+}
+
+export interface ProgramsPageContent {
+    pathwayHeading: string;
+    pathway: PathwayStep[];
+}
+
+/**
+ * Used until the page has been saved from the admin once, and whenever
+ * Supabase is unreachable. These are the values the pathway was hardcoded
+ * with before it became editable.
+ */
+export const DEFAULT_PROGRAMS_PAGE_CONTENT: ProgramsPageContent = {
+    pathwayHeading: 'Athlete Pathway',
+    pathway: [
+        {
+            title: 'Recreational',
+            age: 'Ages 5+',
+            desc: 'Building fundamentals, coordination, and love for the sport.',
+        },
+        {
+            title: 'Pre-Competitive',
+            age: 'Selected by Coach',
+            desc: 'Advanced basics and introduction to routines.',
+        },
+        {
+            title: 'Interclub',
+            age: 'By Audition',
+            desc: 'First step into competition with focus on fun and performance.',
+        },
+        {
+            title: 'Provincial / National',
+            age: 'By Audition',
+            desc: 'High-performance training for serious athletes.',
+        },
+    ],
+};
+
+export async function getProgramsPageContentAsync(): Promise<ProgramsPageContent> {
+    if (!isSupabaseConfigured()) {
+        return DEFAULT_PROGRAMS_PAGE_CONTENT;
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from('page_content')
+            .select('content')
+            .eq('page_id', 'programs')
+            .single();
+
+        if (error && error.code !== 'PGRST116') {
+            throw error;
+        }
+
+        const content = data?.content as Partial<ProgramsPageContent> | undefined;
+
+        // A saved-but-empty pathway is a deliberate choice to hide the section,
+        // so only fall back when the page has never been saved at all.
+        if (!content || !Array.isArray(content.pathway)) {
+            return DEFAULT_PROGRAMS_PAGE_CONTENT;
+        }
+
+        return {
+            pathwayHeading:
+                content.pathwayHeading || DEFAULT_PROGRAMS_PAGE_CONTENT.pathwayHeading,
+            pathway: content.pathway,
+        };
+    } catch (error) {
+        console.error('Error fetching programs page content:', error);
+        return DEFAULT_PROGRAMS_PAGE_CONTENT;
+    }
+}

@@ -1,7 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProgramCard } from "@/components/features/ProgramCard";
-import { getProgramsAsync } from "@/lib/content";
+import { getProgramsAsync, getProgramsPageContentAsync } from "@/lib/content";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,8 +13,11 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function ProgramsPage() {
-    // Get programs from Supabase
-    const programs = await getProgramsAsync();
+    // Get programs and the editable pathway from Supabase
+    const [programs, pageContent] = await Promise.all([
+        getProgramsAsync(),
+        getProgramsPageContentAsync(),
+    ]);
 
     return (
         <Container className="py-24">
@@ -30,20 +33,17 @@ export default async function ProgramsPage() {
                 ))}
             </div>
 
-            <SectionHeading title="Athlete Pathway" centered className="mb-16" />
+            {pageContent.pathway.length > 0 && (
+                <>
+            <SectionHeading title={pageContent.pathwayHeading} centered className="mb-16" />
 
             <div className="relative max-w-4xl mx-auto">
                 {/* Simple timeline/pathway visualization */}
                 <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gray-100 -translate-x-1/2 hidden md:block" />
 
                 <div className="space-y-12">
-                    {[
-                        { title: "Recreational", desc: "Building fundamentals, coordination, and love for the sport.", age: "Ages 5+" },
-                        { title: "Pre-Competitive", desc: "Advanced basics and introduction to routines.", age: "Selected by Coach" },
-                        { title: "Interclub", desc: "First step into competition with focus on fun and performance.", age: "By Audition" },
-                        { title: "Provincial / National", desc: "High-performance training for serious athletes.", age: "By Audition" }
-                    ].map((step, i) => (
-                        <div key={step.title} className={`flex flex-col md:flex-row items-center gap-8 ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
+                    {pageContent.pathway.map((step, i) => (
+                        <div key={`${step.title}-${i}`} className={`flex flex-col md:flex-row items-center gap-8 ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
                             <div className="flex-1 w-full md:w-auto text-center md:text-right">
                                 <div className={`bg-white p-6 rounded-xl shadow-sm border border-gray-100 ${i % 2 === 1 ? 'md:text-left' : 'md:text-right'}`}>
                                     <h4 className="font-display text-xl font-bold text-brand">{step.title}</h4>
@@ -57,6 +57,8 @@ export default async function ProgramsPage() {
                     ))}
                 </div>
             </div>
+                </>
+            )}
         </Container>
     );
 }
